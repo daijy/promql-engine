@@ -5,6 +5,7 @@ package engine
 
 import (
 	"context"
+	"log"
 	"log/slog"
 	"math"
 	"runtime"
@@ -342,6 +343,7 @@ func (e *Engine) MakeRangeQuery(ctx context.Context, q storage.Queryable, opts *
 	}
 	defer e.activeQueryTracker.Delete(idx)
 
+	log.Printf("daijy enter thanos query")
 	expr, err := parser.NewParser(qs, parser.WithFunctions(e.functions)).ParseExpr()
 	if err != nil {
 		return nil, err
