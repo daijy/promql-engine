@@ -5,6 +5,7 @@ package engine
 
 import (
 	"context"
+	"log"
 	"log/slog"
 	"math"
 	"runtime"
@@ -572,6 +573,7 @@ loop:
 		case <-ctx.Done():
 			return newErrResult(ret, ctx.Err())
 		default:
+			log.Printf("daijy10: query %T", q.Query.exec)
 			r, err := q.Query.exec.Next(ctx)
 			if err != nil {
 				return newErrResult(ret, err)
