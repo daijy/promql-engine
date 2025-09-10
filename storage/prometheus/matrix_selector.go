@@ -6,7 +6,9 @@ package prometheus
 import (
 	"context"
 	"fmt"
+	"log"
 	"math"
+	"runtime/debug"
 	"strings"
 	"sync"
 	"time"
@@ -90,6 +92,7 @@ func NewMatrixSelector(
 	batchSize int64,
 	shard, numShard int,
 ) (model.VectorOperator, error) {
+	debug.PrintStack()
 	call, err := ringbuffer.NewRangeVectorFunc(functionName)
 	if err != nil {
 		return nil, err
@@ -150,6 +153,7 @@ func (o *matrixSelector) GetPool() *model.VectorPool {
 }
 
 func (o *matrixSelector) Next(ctx context.Context) ([]model.StepVector, error) {
+	log.Printf("daijy10: matrixSelector start")
 	start := time.Now()
 	defer func() { o.AddExecutionTimeTaken(time.Since(start)) }()
 
@@ -218,6 +222,7 @@ func (o *matrixSelector) Next(ctx context.Context) ([]model.StepVector, error) {
 		o.currentStep += o.step * int64(o.numSteps)
 		o.currentSeries = 0
 	}
+	log.Printf("daijy10: matrixSelector end")
 	return vectors, nil
 }
 
