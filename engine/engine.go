@@ -135,7 +135,7 @@ func NewWithScanners(opts Opts, scanners engstorage.Scanners) *Engine {
 	}
 	if opts.ExtLookbackDelta == 0 {
 		opts.ExtLookbackDelta = 1 * time.Hour
-		opts.Logger.Debug("external lookback delta is zero, setting to default value", "value", 1*time.Hour)
+		opts.Logger.Debug("external lookback delta is zero, setting to default value", "value", 1*24*time.Hour)
 	}
 	if len(opts.LogicalOptimizers) == 0 {
 		opts.LogicalOptimizers = append(
@@ -343,6 +343,7 @@ func (e *Engine) MakeRangeQuery(ctx context.Context, q storage.Queryable, opts *
 	}
 	defer e.activeQueryTracker.Delete(idx)
 
+	log.Printf("daijy enter thanos query")
 	expr, err := parser.NewParser(qs, parser.WithFunctions(e.functions)).ParseExpr()
 	if err != nil {
 		return nil, err
@@ -573,7 +574,6 @@ loop:
 		case <-ctx.Done():
 			return newErrResult(ret, ctx.Err())
 		default:
-			log.Printf("daijy10: query %T", q.Query.exec)
 			r, err := q.Query.exec.Next(ctx)
 			if err != nil {
 				return newErrResult(ret, err)

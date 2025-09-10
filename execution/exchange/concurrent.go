@@ -6,6 +6,7 @@ package exchange
 import (
 	"context"
 	"fmt"
+	"log"
 	"sync"
 	"time"
 
@@ -30,6 +31,7 @@ type concurrencyOperator struct {
 }
 
 func NewConcurrent(next model.VectorOperator, bufferSize int, opts *query.Options) model.VectorOperator {
+	log.Printf("daijy10: query %T", next)
 	oper := &concurrencyOperator{
 		next:       next,
 		buffer:     make(chan maybeStepVector, bufferSize),
