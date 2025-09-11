@@ -224,6 +224,8 @@ func (o *matrixSelector) Next(ctx context.Context) ([]model.StepVector, error) {
 	return vectors, nil
 }
 
+var data_points = 0
+
 func (o *matrixSelector) loadSeries(ctx context.Context) error {
 	var err error
 	o.once.Do(func() {
@@ -257,6 +259,13 @@ func (o *matrixSelector) loadSeries(ctx context.Context) error {
 			}
 			o.series[i] = lbls
 		}
+		for _, s := range o.scanners {
+			for valType := s.iterator.Next(); valType != chunkenc.ValNone; valType = s.iterator.Next() {
+				// Process each sample in the iterator.
+				data_points++
+			}
+		}
+
 		numSeries := int64(len(o.series))
 		if o.seriesBatchSize == 0 || numSeries < o.seriesBatchSize {
 			o.seriesBatchSize = numSeries
@@ -276,7 +285,7 @@ func (o *matrixSelector) loadSeries(ctx context.Context) error {
 				}
 			}
 		}
-		log.Printf("daijy10: GetSeries end")
+		log.Printf("daijy10: GetSeries end %d", data_points)
 	})
 	return err
 }
