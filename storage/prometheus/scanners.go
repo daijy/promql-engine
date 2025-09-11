@@ -5,7 +5,6 @@ package prometheus
 
 import (
 	"context"
-	"log"
 	"math"
 
 	"github.com/thanos-io/promql-engine/execution/exchange"
@@ -129,7 +128,6 @@ func (p Scanners) NewMatrixSelector(
 
 	operators := make([]model.VectorOperator, 0, opts.DecodingConcurrency)
 	for i := 0; i < opts.DecodingConcurrency; i++ {
-		log.Printf("daijy10: matrixSelector start")
 		operator, err := NewMatrixSelector(
 			model.NewVectorPool(opts.StepsBatch),
 			selector,

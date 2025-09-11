@@ -6,6 +6,7 @@ package prometheus
 import (
 	"context"
 	"fmt"
+	"log"
 	"math"
 	"strings"
 	"sync"
@@ -226,6 +227,7 @@ func (o *matrixSelector) Next(ctx context.Context) ([]model.StepVector, error) {
 func (o *matrixSelector) loadSeries(ctx context.Context) error {
 	var err error
 	o.once.Do(func() {
+		log.Printf("daijy10: GetSeries start: %d", o.shard)
 		series, loadErr := o.storage.GetSeries(ctx, o.shard, o.numShards)
 		if loadErr != nil {
 			err = loadErr
@@ -274,6 +276,7 @@ func (o *matrixSelector) loadSeries(ctx context.Context) error {
 				}
 			}
 		}
+		log.Printf("daijy10: GetSeries end")
 	})
 	return err
 }
