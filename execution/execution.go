@@ -18,6 +18,7 @@ package execution
 
 import (
 	"context"
+	"log"
 	"sort"
 	"time"
 
@@ -126,6 +127,7 @@ func newCall(ctx context.Context, e *logicalplan.FunctionCall, scanners storage.
 	// TODO(saswatamcode): Range vector result might need new operator
 	// before it can be non-nested. https://github.com/thanos-io/promql-engine/issues/39
 	for i := range e.Args {
+		log.Printf("daijy10: Args[%d] = %s", i, e.Args[i].String())
 		switch t := e.Args[i].(type) {
 		case *logicalplan.Subquery:
 			return newSubqueryFunction(ctx, e, t, scanners, opts, hints)
