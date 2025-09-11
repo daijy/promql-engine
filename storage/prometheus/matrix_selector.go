@@ -7,7 +7,6 @@ import (
 	"context"
 	"fmt"
 	"math"
-	"runtime/debug"
 	"strings"
 	"sync"
 	"time"
@@ -91,7 +90,6 @@ func NewMatrixSelector(
 	batchSize int64,
 	shard, numShard int,
 ) (model.VectorOperator, error) {
-	debug.PrintStack()
 	call, err := ringbuffer.NewRangeVectorFunc(functionName)
 	if err != nil {
 		return nil, err
