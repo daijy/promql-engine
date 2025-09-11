@@ -6,6 +6,7 @@ package aggregate
 import (
 	"context"
 	"fmt"
+	"log"
 	"math"
 	"sync"
 	"time"
@@ -113,6 +114,7 @@ func (a *aggregate) GetPool() *model.VectorPool {
 }
 
 func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
+	log.Printf("jidai start aggregate")
 	start := time.Now()
 	defer func() { a.AddExecutionTimeTaken(time.Since(start)) }()
 
@@ -183,6 +185,7 @@ func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 		}
 		result = append(result, a.tables[i].toVector(ctx, a.vectorPool))
 	}
+	log.Printf("jidai end aggregate")
 	return result, nil
 }
 
