@@ -6,7 +6,6 @@ package prometheus
 import (
 	"context"
 	"fmt"
-	"log"
 	"math"
 	"runtime/debug"
 	"strings"
@@ -153,7 +152,7 @@ func (o *matrixSelector) GetPool() *model.VectorPool {
 }
 
 func (o *matrixSelector) Next(ctx context.Context) ([]model.StepVector, error) {
-	log.Printf("daijy10: matrixSelector start")
+	//log.Printf("daijy10: matrixSelector start")
 	start := time.Now()
 	defer func() { o.AddExecutionTimeTaken(time.Since(start)) }()
 
@@ -222,7 +221,7 @@ func (o *matrixSelector) Next(ctx context.Context) ([]model.StepVector, error) {
 		o.currentStep += o.step * int64(o.numSteps)
 		o.currentSeries = 0
 	}
-	log.Printf("daijy10: matrixSelector end")
+	//log.Printf("daijy10: matrixSelector end")
 	return vectors, nil
 }
 
