@@ -375,6 +375,9 @@ func (e *Engine) MakeRangeQuery(ctx context.Context, q storage.Queryable, opts *
 	}
 	e.metrics.totalQueries.Inc()
 
+	var query = &Query{exec: exec, opts: opts}
+	e.logger.Info("exec plan", "tree", query.Explain())
+
 	return &compatibilityQuery{
 		Query:    &Query{exec: exec, opts: opts},
 		engine:   e,
@@ -417,8 +420,6 @@ func (e *Engine) MakeRangeQueryFromPlan(ctx context.Context, q storage.Queryable
 	}
 	e.metrics.totalQueries.Inc()
 
-	var query = &Query{exec: exec, opts: opts}
-	e.logger.Info("exec plan", "tree", query.Explain())
 	return &compatibilityQuery{
 		Query:    &Query{exec: exec, opts: opts},
 		engine:   e,
