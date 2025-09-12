@@ -141,7 +141,6 @@ func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 	}
 
 	if a.paramOp != nil {
-		log.Printf("jidai5: here0")
 		args, err := a.paramOp.Next(ctx)
 		if err != nil {
 			return nil, err
@@ -166,10 +165,12 @@ func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 		}
 		a.lastBatch = nil
 	}
-	log.Printf("jidai5: here2")
+	log.Printf("jidai5: here2, %T", a.next)
+	counter := 0
 	for {
+		log.Printf("jidai5: here3, counter %d", counter)
 		next, err := a.next.Next(ctx)
-		log.Printf("jidai5: here3")
+		log.Printf("jidai5: here4, counter %d", counter)
 		if err != nil {
 			return nil, err
 		}
