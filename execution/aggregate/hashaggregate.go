@@ -121,7 +121,7 @@ func (writer logWriter) Write(bytes []byte) (int, error) {
 	return fmt.Print(time.Now().UTC().Format("2006-01-02T15:04:05.999Z") + string(bytes))
 }
 
-var counter int := 0
+var counter int = 0
 
 func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 	log.Printf("jidai start aggregate")
