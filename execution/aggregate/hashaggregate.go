@@ -122,6 +122,7 @@ func (writer logWriter) Write(bytes []byte) (int, error) {
 }
 
 var counter int = 0
+var num_steps int = 0
 
 func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 	log.Printf("jidai start aggregate")
@@ -170,10 +171,8 @@ func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 	for {
 		next, err := a.next.Next(ctx)
 		for _, a := range next {
-			if counter < 1000 {
-				log.Printf("jidai5: here1, %d, %d", a.T, len(a.Samples))
-				counter++
-			}
+			num_steps++
+			counter += len(a.Samples)
 		}
 		if err != nil {
 			return nil, err
@@ -184,7 +183,6 @@ func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 		// Keep aggregating samples as long as timestamps of batches are equal.
 		currentTs := a.tables[0].timestamp()
 		if currentTs == math.MinInt64 || next[0].T == currentTs {
-			log.Printf("jidai6: here2")
 			if err := a.aggregate(ctx, next); err != nil {
 				return nil, err
 			}
@@ -193,6 +191,7 @@ func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 		a.lastBatch = next
 		break
 	}
+	log.Printf("jidai1: counter %d num_steps %d", counter, num_steps)
 
 	if a.tables[0].timestamp() == math.MinInt64 {
 		return nil, nil
