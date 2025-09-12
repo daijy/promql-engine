@@ -6,7 +6,6 @@ package aggregate
 import (
 	"context"
 	"fmt"
-	"log"
 	"math"
 
 	"github.com/thanos-io/promql-engine/execution/model"
@@ -26,15 +25,12 @@ type vectorTable struct {
 }
 
 func newVectorizedTables(stepsBatch int, a parser.ItemType) ([]aggregateTable, error) {
-	log.Printf("daijy10: stepsBatch %d", stepsBatch)
 	tables := make([]aggregateTable, stepsBatch)
 	for i := 0; i < len(tables); i++ {
-		log.Printf("daijy10: newVectorAccumulator")
 		acc, err := newVectorAccumulator(a)
 		if err != nil {
 			return nil, err
 		}
-		log.Printf("daijy10: newVectorizedTable")
 		tables[i] = newVectorizedTable(acc)
 	}
 

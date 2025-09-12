@@ -56,7 +56,6 @@ func NewHashAggregate(
 	opts *query.Options,
 ) (model.VectorOperator, error) {
 	// Verify that the aggregation is supported.
-	log.Printf("jidai4 NewHashAggregate")
 	if _, err := newScalarAccumulator(aggregation); err != nil {
 		return nil, err
 	}
@@ -75,6 +74,7 @@ func NewHashAggregate(
 		labels:      labels,
 		stepsBatch:  opts.StepsBatch,
 	}
+	log.Printf("jidai5 NewHashAggregate stepsBatch %d", opts.StepsBatch)
 
 	a.OperatorTelemetry = telemetry.NewTelemetry(a, opts)
 
@@ -132,6 +132,7 @@ func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 	}
 
 	if a.paramOp != nil {
+		log.Printf("jidai get paramOp %T", a.paramOp)
 		args, err := a.paramOp.Next(ctx)
 		if err != nil {
 			return nil, err
