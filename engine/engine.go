@@ -361,7 +361,6 @@ func (e *Engine) MakeRangeQuery(ctx context.Context, q storage.Queryable, opts *
 		DisableDuplicateLabelCheck: e.disableDuplicateLabelChecks,
 	}
 	lplan, warns := logicalplan.NewFromAST(expr, qOpts, planOpts).Optimize(e.getLogicalOptimizers(opts))
-	log.Printf("daijy logical plan: %s", lplan.Root().String())
 
 	ctx = warnings.NewContext(ctx)
 	defer func() { warns.Merge(warnings.FromContext(ctx)) }()
@@ -376,7 +375,7 @@ func (e *Engine) MakeRangeQuery(ctx context.Context, q storage.Queryable, opts *
 	}
 	e.metrics.totalQueries.Inc()
 
-	return &compatibilityQuery{
+	var qq = &compatibilityQuery{
 		Query:    &Query{exec: exec, opts: opts},
 		engine:   e,
 		plan:     lplan,
@@ -386,7 +385,11 @@ func (e *Engine) MakeRangeQuery(ctx context.Context, q storage.Queryable, opts *
 		start:    start,
 		end:      end,
 		step:     step,
-	}, nil
+	}
+	if eq, ok := any(qq).(ExplainableQuery); ok {
+		e.logger.Info("exec plan", "tree", eq.Explain())
+	}
+	return qq, nil
 }
 
 func (e *Engine) MakeRangeQueryFromPlan(ctx context.Context, q storage.Queryable, opts *QueryOpts, root logicalplan.Node, start, end time.Time, step time.Duration) (promql.Query, error) {
