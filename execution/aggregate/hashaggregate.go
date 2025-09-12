@@ -125,6 +125,7 @@ func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 	default:
 	}
 
+	log.Printf("jidai5: here0")
 	var err error
 	a.once.Do(func() { err = a.initializeTables(ctx) })
 	if err != nil {
@@ -146,18 +147,21 @@ func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 		a.paramOp.GetPool().PutVectors(args)
 	}
 
+	log.Printf("jidai5: params %d", len(a.params))
 	for i, p := range a.params {
 		a.tables[i].reset(p)
 	}
 	if a.lastBatch != nil {
+		log.Printf("jidai5: here1")
 		if err := a.aggregate(ctx, a.lastBatch); err != nil {
 			return nil, err
 		}
 		a.lastBatch = nil
 	}
+	log.Printf("jidai5: here2")
 	for {
-		log.Printf("jidai in for loop aggregate, a.next %T", a.next)
 		next, err := a.next.Next(ctx)
+		log.Printf("jidai5: here3")
 		if err != nil {
 			return nil, err
 		}
@@ -176,6 +180,7 @@ func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 		break
 	}
 
+	log.Printf("jidai5: here4")
 	if a.tables[0].timestamp() == math.MinInt64 {
 		return nil, nil
 	}
