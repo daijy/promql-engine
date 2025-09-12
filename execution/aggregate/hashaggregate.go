@@ -132,7 +132,6 @@ func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 	}
 
 	if a.paramOp != nil {
-		log.Printf("jidai get paramOp %T", a.paramOp)
 		args, err := a.paramOp.Next(ctx)
 		if err != nil {
 			return nil, err
@@ -157,6 +156,7 @@ func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 		a.lastBatch = nil
 	}
 	for {
+		log.Printf("jidai in for loop aggregate, a.next %T", a.next)
 		next, err := a.next.Next(ctx)
 		if err != nil {
 			return nil, err
