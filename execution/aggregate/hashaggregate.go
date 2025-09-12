@@ -171,6 +171,7 @@ func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 		log.Printf("jidai5: here3, counter %d", counter)
 		next, err := a.next.Next(ctx)
 		log.Printf("jidai5: here4, counter %d", counter)
+		counter++
 		if err != nil {
 			return nil, err
 		}
