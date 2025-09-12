@@ -284,10 +284,8 @@ func newAggregateExpression(ctx context.Context, e *logicalplan.Aggregation, sca
 		}
 	}
 	if e.Op == parser.TOPK || e.Op == parser.BOTTOMK || e.Op == parser.LIMITK || e.Op == parser.LIMIT_RATIO {
-		log.Printf("jidai111")
 		next, err = aggregate.NewKHashAggregate(model.NewVectorPool(opts.StepsBatch), next, paramOp, e.Op, !e.Without, e.Grouping, opts)
 	} else {
-		log.Printf("jidai112")
 		next, err = aggregate.NewHashAggregate(model.NewVectorPool(opts.StepsBatch), next, paramOp, e.Op, !e.Without, e.Grouping, opts)
 	}
 	if err != nil {

@@ -56,6 +56,7 @@ func NewHashAggregate(
 	opts *query.Options,
 ) (model.VectorOperator, error) {
 	// Verify that the aggregation is supported.
+	log.Printf("jidai4 NewHashAggregate")
 	if _, err := newScalarAccumulator(aggregation); err != nil {
 		return nil, err
 	}
