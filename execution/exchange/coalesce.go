@@ -5,6 +5,7 @@ package exchange
 
 import (
 	"context"
+	"log"
 	"math"
 	"sync"
 	"sync/atomic"
@@ -113,6 +114,7 @@ func (c *coalesce) Next(ctx context.Context) ([]model.StepVector, error) {
 	var errChan = make(errorChan, len(c.operators))
 	for idx, o := range c.operators {
 		// We already have a batch from the previous iteration.
+		log.Printf("jidai6: coalesce idx %d, %T", idx, o)
 		if c.inVectors[idx] != nil {
 			continue
 		}
