@@ -121,6 +121,8 @@ func (writer logWriter) Write(bytes []byte) (int, error) {
 	return fmt.Print(time.Now().UTC().Format("2006-01-02T15:04:05.999Z") + string(bytes))
 }
 
+var counter int
+
 func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 	log.Printf("jidai start aggregate")
 	start := time.Now()
@@ -158,7 +160,6 @@ func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 	for i, p := range a.params {
 		a.tables[i].reset(p)
 	}
-	var counter int
 	// If we have a last batch from the previous call, process it first.
 	if a.lastBatch != nil {
 		for _, a := range a.lastBatch {
