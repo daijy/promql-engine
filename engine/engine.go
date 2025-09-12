@@ -376,7 +376,7 @@ func (e *Engine) MakeRangeQuery(ctx context.Context, q storage.Queryable, opts *
 	e.metrics.totalQueries.Inc()
 
 	var query = &Query{exec: exec, opts: opts}
-	e.logger.Info("exec plan", "tree", query.Explain())
+	log.Printf("daijy 7: %s", query.Explain())
 
 	return &compatibilityQuery{
 		Query:    &Query{exec: exec, opts: opts},
