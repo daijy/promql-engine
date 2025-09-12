@@ -121,7 +121,7 @@ func (writer logWriter) Write(bytes []byte) (int, error) {
 	return fmt.Print(time.Now().UTC().Format("2006-01-02T15:04:05.999Z") + string(bytes))
 }
 
-var counter int
+var counter int := 0
 
 func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 	log.Printf("jidai start aggregate")
@@ -163,22 +163,25 @@ func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 	// If we have a last batch from the previous call, process it first.
 	if a.lastBatch != nil {
 		for _, a := range a.lastBatch {
-			counter += len(a.Samples)
+			if counter < 100 {
+				log.Printf("jidai5: here1, %d, %d", a.T, len(a.Samples))
+				counter++
+			}
 		}
-		log.Printf("jidai5: here1, %d", counter)
+
 		if err := a.aggregate(ctx, a.lastBatch); err != nil {
 			return nil, err
 		}
 		a.lastBatch = nil
 	}
-	log.Printf("jidai5: here2")
 	for {
 		next, err := a.next.Next(ctx)
 		for _, a := range next {
-			counter += len(a.Samples)
+			if counter < 100 {
+				log.Printf("jidai5: here1, %d, %d", a.T, len(a.Samples))
+				counter++
+			}
 		}
-		log.Printf("jidai5: here1, %d", counter)
-		counter++
 		if err != nil {
 			return nil, err
 		}
