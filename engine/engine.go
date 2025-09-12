@@ -375,7 +375,7 @@ func (e *Engine) MakeRangeQuery(ctx context.Context, q storage.Queryable, opts *
 	}
 	e.metrics.totalQueries.Inc()
 
-	var qq = &compatibilityQuery{
+	return &compatibilityQuery{
 		Query:    &Query{exec: exec, opts: opts},
 		engine:   e,
 		plan:     lplan,
@@ -385,11 +385,7 @@ func (e *Engine) MakeRangeQuery(ctx context.Context, q storage.Queryable, opts *
 		start:    start,
 		end:      end,
 		step:     step,
-	}
-	if eq, ok := any(qq).(ExplainableQuery); ok {
-		e.logger.Info("exec plan", "tree", eq.Explain())
-	}
-	return qq, nil
+	}, nil
 }
 
 func (e *Engine) MakeRangeQueryFromPlan(ctx context.Context, q storage.Queryable, opts *QueryOpts, root logicalplan.Node, start, end time.Time, step time.Duration) (promql.Query, error) {
@@ -534,6 +530,7 @@ type compatibilityQuery struct {
 }
 
 func (q *compatibilityQuery) Exec(ctx context.Context) (ret *promql.Result) {
+	q.engine.logger.Info("exec plan", "tree", q.Explain())
 	idx, err := q.engine.activeQueryTracker.Insert(ctx, q.String())
 	if err != nil {
 		return &promql.Result{Err: err}
