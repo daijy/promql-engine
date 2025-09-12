@@ -159,7 +159,7 @@ func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 		a.tables[i].reset(p)
 	}
 	if a.lastBatch != nil {
-		log.Printf("jidai5: here1")
+		log.Printf("jidai5: here1, %d", len(a.lastBatch))
 		if err := a.aggregate(ctx, a.lastBatch); err != nil {
 			return nil, err
 		}
@@ -168,9 +168,8 @@ func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 	log.Printf("jidai5: here2, %T", a.next)
 	counter := 0
 	for {
-		log.Printf("jidai5: here3, counter %d", counter)
 		next, err := a.next.Next(ctx)
-		log.Printf("jidai5: here4, counter %d", counter)
+		log.Printf("jidai5: here4, counter %d", len(next))
 		counter++
 		if err != nil {
 			return nil, err
