@@ -184,6 +184,7 @@ func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 		// Keep aggregating samples as long as timestamps of batches are equal.
 		currentTs := a.tables[0].timestamp()
 		if currentTs == math.MinInt64 || next[0].T == currentTs {
+			log.Printf("jidai6: here2")
 			if err := a.aggregate(ctx, next); err != nil {
 				return nil, err
 			}
