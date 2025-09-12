@@ -158,21 +158,25 @@ func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 	for i, p := range a.params {
 		a.tables[i].reset(p)
 	}
+	var counter int
+	// If we have a last batch from the previous call, process it first.
 	if a.lastBatch != nil {
-		log.Printf("jidai5: here1, %d", len(a.lastBatch))
 		for _, a := range a.lastBatch {
-			log.Printf("jidai5: here1, %d, %d", len(a.Samples), len(a.SampleIDs))
+			counter += len(a.Samples)
 		}
+		log.Printf("jidai5: here1, %d", counter)
 		if err := a.aggregate(ctx, a.lastBatch); err != nil {
 			return nil, err
 		}
 		a.lastBatch = nil
 	}
 	log.Printf("jidai5: here2")
-	counter := 0
 	for {
 		next, err := a.next.Next(ctx)
-		log.Printf("jidai5: here4, counter %d", len(next))
+		for _, a := range next {
+			counter += len(a.Samples)
+		}
+		log.Printf("jidai5: here1, %d", counter)
 		counter++
 		if err != nil {
 			return nil, err
