@@ -11,6 +11,7 @@ import (
 	"runtime"
 	"slices"
 	"sort"
+	"strings"
 	"time"
 
 	"github.com/thanos-io/promql-engine/execution"
@@ -375,8 +376,28 @@ func (e *Engine) MakeRangeQuery(ctx context.Context, q storage.Queryable, opts *
 	}
 	e.metrics.totalQueries.Inc()
 
+	var b strings.Builder
+	var explain func(n ExplainOutputNode, indent, indentNext string)
+	explain = func(n ExplainOutputNode, indent, indentNext string) {
+		b.WriteString(indent)
+		b.WriteString(n.OperatorName)
+		if len(n.Children) == 0 {
+			b.WriteString("\n")
+			return
+		}
+		b.WriteString(":\n")
+		for i, c := range n.Children {
+			if i == len(n.Children)-1 {
+				explain(c, indentNext+"└──", indentNext+"   ")
+			} else {
+				explain(c, indentNext+"├──", indentNext+"│  ")
+			}
+		}
+	}
+
 	var query = &Query{exec: exec, opts: opts}
-	log.Printf("daijy 7: %s", query.Explain())
+	explain(*query.Explain(), "", "")
+	log.Printf("daijy 7: %s", b.String())
 
 	return &compatibilityQuery{
 		Query:    &Query{exec: exec, opts: opts},
