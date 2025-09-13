@@ -227,8 +227,10 @@ func (a *aggregate) initializeTables(ctx context.Context) error {
 	)
 
 	if a.by && len(a.labels) == 0 {
+		log.Printf("jidai6 initializeVectorizedTables")
 		tables, series, err = a.initializeVectorizedTables(ctx)
 	} else {
+		log.Printf("jidai6 initializeScalarTables")
 		tables, series, err = a.initializeScalarTables(ctx)
 	}
 	if err != nil {
