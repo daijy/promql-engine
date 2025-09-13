@@ -307,6 +307,7 @@ func (a *aggregate) initializeScalarTables(ctx context.Context) ([]aggregateTabl
 		if i < 100 {
 			log.Printf("output series %d: %s", i, s.Metric.String())
 		}
+	}
 	tables, err := newScalarTables(a.stepsBatch, inputCache, outputCache, a.aggregation)
 	if err != nil {
 		return nil, nil, err
