@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"log"
 	"math"
-	"runtime/debug"
 	"sync"
 	"time"
 
@@ -206,9 +205,6 @@ func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 		result = append(result, a.tables[i].toVector(ctx, a.vectorPool))
 	}
 	log.Printf("jidai end aggregate, %d", len(result))
-	if num_steps <= 30 {
-		debug.PrintStack()
-	}
 	return result, nil
 }
 
@@ -263,15 +259,8 @@ func (a *aggregate) initializeVectorizedTables(ctx context.Context) ([]aggregate
 }
 
 func (a *aggregate) initializeScalarTables(ctx context.Context) ([]aggregateTable, []labels.Labels, error) {
-	var series_count int = 0
 	series, err := a.next.Series(ctx)
 	log.Printf("daijy6: len(series), %d, %t", len(series), !a.by)
-	for i, s := range series {
-		if series_count <= 100 {
-			log.Printf("series %d: %s", i, s.String())
-			series_count++
-		}
-	}
 	if err != nil {
 		return nil, nil, err
 	}

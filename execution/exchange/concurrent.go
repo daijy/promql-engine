@@ -6,6 +6,7 @@ package exchange
 import (
 	"context"
 	"fmt"
+	"runtime/debug"
 	"sync"
 	"time"
 
@@ -59,8 +60,14 @@ func (c *concurrencyOperator) GetPool() *model.VectorPool {
 	return c.next.GetPool()
 }
 
+var counter int = 0
+
 func (c *concurrencyOperator) Next(ctx context.Context) ([]model.StepVector, error) {
 	start := time.Now()
+	if counter <= 10 {
+		debug.PrintStack()
+		counter++
+	}
 	defer func() { c.AddExecutionTimeTaken(time.Since(start)) }()
 
 	select {
