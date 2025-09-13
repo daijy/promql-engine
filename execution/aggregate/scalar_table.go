@@ -6,7 +6,6 @@ package aggregate
 import (
 	"context"
 	"fmt"
-	"log"
 	"math"
 	"sort"
 
@@ -146,8 +145,6 @@ func hashMetric(
 	buf = buf[:0]
 	builder.Reset()
 
-	log.Printf("jidai7: %s", grouping[0])
-	log.Printf("jidai7: %t", without)
 	if without {
 		metric.Range(func(lbl labels.Label) {
 			if lbl.Name == labels.MetricName {
@@ -173,9 +170,6 @@ func hashMetric(
 		builder.Add(lbl.Name, lbl.Value)
 	})
 	key, _ := metric.HashForLabels(buf, grouping...)
-	for i, lblName := range builder.Labels() {
-		log.Printf("jidai7: %d: %s", i, lblName)
-	}
 	return key, builder.Labels()
 }
 

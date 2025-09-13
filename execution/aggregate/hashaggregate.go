@@ -261,7 +261,7 @@ func (a *aggregate) initializeVectorizedTables(ctx context.Context) ([]aggregate
 func (a *aggregate) initializeScalarTables(ctx context.Context) ([]aggregateTable, []labels.Labels, error) {
 	var series_count int = 0
 	series, err := a.next.Series(ctx)
-	log.Printf("daijy6: len(series), %d", len(series))
+	log.Printf("daijy6: len(series), %d, %t", len(series), !a.by)
 	for i, s := range series {
 		if series_count <= 100 {
 			log.Printf("series %d: %s", i, s.String())
@@ -287,6 +287,7 @@ func (a *aggregate) initializeScalarTables(ctx context.Context) ([]aggregateTabl
 	for _, lblName := range a.labels {
 		labelsMap[lblName] = struct{}{}
 	}
+
 	for i := 0; i < len(series); i++ {
 		hash, lbls := hashMetric(builder, series[i], !a.by, a.labels, labelsMap, hashingBuf)
 		output, ok := outputMap[hash]
@@ -301,6 +302,11 @@ func (a *aggregate) initializeScalarTables(ctx context.Context) ([]aggregateTabl
 
 		inputCache[i] = output.ID
 	}
+	log.Printf("daijy7: len(outputCache), %d", len(outputCache))
+	for i, s := range outputCache {
+		if i < 100 {
+			log.Printf("output series %d: %s", i, s.Metric.String())
+		}
 	tables, err := newScalarTables(a.stepsBatch, inputCache, outputCache, a.aggregation)
 	if err != nil {
 		return nil, nil, err
