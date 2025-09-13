@@ -204,7 +204,7 @@ func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 		}
 		result = append(result, a.tables[i].toVector(ctx, a.vectorPool))
 	}
-	log.Printf("jidai end aggregate")
+	log.Printf("jidai end aggregate, %d", len(result))
 	return result, nil
 }
 
@@ -301,12 +301,6 @@ func (a *aggregate) initializeScalarTables(ctx context.Context) ([]aggregateTabl
 		}
 
 		inputCache[i] = output.ID
-	}
-	log.Printf("daijy7: len(outputCache), %d", len(outputCache))
-	for i, s := range outputCache {
-		if i < 100 {
-			log.Printf("output series %d: %s", i, s.Metric.String())
-		}
 	}
 	tables, err := newScalarTables(a.stepsBatch, inputCache, outputCache, a.aggregation)
 	if err != nil {
