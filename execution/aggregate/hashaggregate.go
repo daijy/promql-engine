@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log"
 	"math"
+	"runtime/debug"
 	"sync"
 	"time"
 
@@ -205,6 +206,9 @@ func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 		result = append(result, a.tables[i].toVector(ctx, a.vectorPool))
 	}
 	log.Printf("jidai end aggregate, %d", len(result))
+	if counter <= 5 {
+		debug.PrintStack()
+	}
 	return result, nil
 }
 
