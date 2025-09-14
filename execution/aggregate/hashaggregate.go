@@ -204,7 +204,7 @@ func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 		}
 		result = append(result, a.tables[i].toVector(ctx, a.vectorPool))
 	}
-	log.Printf("jidai end aggregate, %d", len(result))
+	log.Printf("jidai end aggregate, %d, %d", len(result), len(result[0].SampleIDs))
 	return result, nil
 }
 

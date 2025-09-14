@@ -6,6 +6,7 @@ package aggregate
 import (
 	"context"
 	"fmt"
+	"log"
 	"math"
 	"sort"
 
@@ -114,9 +115,18 @@ func (t *scalarTable) reset(arg float64) {
 	t.ts = math.MinInt64
 }
 
+var counter2 int = 0
+
 func (t *scalarTable) toVector(ctx context.Context, pool *model.VectorPool) model.StepVector {
 	result := pool.GetStepVector(t.ts)
+	if counter2 == 0 {
+		for i, v := range t.outputs {
+			log.Printf("jidai8: %s: %d", i, v.Metric.String(), v.ID)
+		}
+		counter2++
+	}
 	for i, v := range t.outputs {
+
 		switch t.accumulators[i].ValueType() {
 		case NoValue:
 			continue
