@@ -194,6 +194,7 @@ func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 	log.Printf("jidai1: counter %d num_steps %d", counter, num_steps)
 
 	if a.tables[0].timestamp() == math.MinInt64 {
+		log.Printf("jidai herehere9")
 		return nil, nil
 	}
 
