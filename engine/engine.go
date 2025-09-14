@@ -613,6 +613,7 @@ loop:
 			q.Query.exec.GetPool().PutVectors(r)
 		}
 	}
+	log.Printf("daijy8: len(series), %d", len(series))
 
 	// For range Query we expect always a Matrix value type.
 	if q.t == RangeQuery {
@@ -630,7 +631,6 @@ loop:
 		}
 		return ret
 	}
-	log.Printf("daijy8: len(series), %d", len(series))
 
 	var result parser.Value
 	switch q.plan.Root().ReturnType() {
