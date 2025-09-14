@@ -619,6 +619,7 @@ loop:
 	// For range Query we expect always a Matrix value type.
 	if q.t == RangeQuery {
 		log.Printf("daijy5: len(series), %d", len(series))
+		log.Printf("daijy5: len(series[0].Floats): %d, len(series[0].Histograms): %d", len(series[0].Floats), len(series[0].Histograms))
 		matrix := make(promql.Matrix, 0, len(series))
 		for _, s := range series {
 			if len(s.Floats)+len(s.Histograms) == 0 {
