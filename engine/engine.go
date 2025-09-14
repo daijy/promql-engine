@@ -568,6 +568,8 @@ func (q *compatibilityQuery) Exec(ctx context.Context) (ret *promql.Result) {
 	for i, s := range resultSeries {
 		series[i].Metric = s
 	}
+	log.Printf("daijy5: q.t, %d", q.t)
+	log.Printf("daijy5: q.plan.Root().ReturnType(), %s", q.plan.Root().ReturnType())
 loop:
 	for {
 		select {
@@ -577,11 +579,9 @@ loop:
 			r, err := q.Query.exec.Next(ctx)
 			log.Printf("daijy7 len(r), %d, %d, %d", len(r), len(r[0].SampleIDs), len(r[0].HistogramIDs))
 			if err != nil {
-				log.Printf("daijy here4")
 				return newErrResult(ret, err)
 			}
 			if r == nil {
-				log.Printf("daijy here3")
 				break loop
 			}
 
@@ -614,9 +614,7 @@ loop:
 			}
 			q.Query.exec.GetPool().PutVectors(r)
 		}
-		log.Printf("daijy here2")
 	}
-	log.Printf("daijy8: len(series), %d", len(series))
 
 	// For range Query we expect always a Matrix value type.
 	if q.t == RangeQuery {
@@ -678,6 +676,7 @@ loop:
 	}
 
 	ret.Value = result
+	log.Printf("daijy8: len(series), %d", len(series))
 	return ret
 }
 
