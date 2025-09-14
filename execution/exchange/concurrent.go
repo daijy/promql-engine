@@ -6,8 +6,6 @@ package exchange
 import (
 	"context"
 	"fmt"
-	"log"
-	"runtime/debug"
 	"sync"
 	"time"
 
@@ -78,8 +76,6 @@ func (c *concurrencyOperator) Next(ctx context.Context) ([]model.StepVector, err
 
 	r, ok := <-c.buffer
 	if !ok {
-		log.Printf("jidai herehere9")
-		debug.PrintStack()
 		return nil, nil
 	}
 	if r.err != nil {

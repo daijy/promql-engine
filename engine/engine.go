@@ -590,7 +590,6 @@ loop:
 			if len(series) == 0 && len(r) != 0 {
 				series = make([]promql.Series, len(r[0].Samples))
 			}
-			log.Printf("daijy5: herehere4")
 
 			for _, vector := range r {
 				for i, s := range vector.SampleIDs {
@@ -613,17 +612,13 @@ loop:
 				}
 				q.Query.exec.GetPool().PutStepVector(vector)
 			}
-			log.Printf("daijy5: herehere5")
 			q.Query.exec.GetPool().PutVectors(r)
-			log.Printf("daijy5: herehere6")
 		}
-		log.Printf("daijy5: herehere7")
 	}
-	log.Printf("daijy5: herehere8")
 
 	// For range Query we expect always a Matrix value type.
 	if q.t == RangeQuery {
-		log.Printf("daijy5: herehere")
+		log.Printf("daijy5: len(series), %d", len(series))
 		matrix := make(promql.Matrix, 0, len(series))
 		for _, s := range series {
 			if len(s.Floats)+len(s.Histograms) == 0 {
