@@ -615,9 +615,10 @@ loop:
 			q.Query.exec.GetPool().PutVectors(r)
 			log.Printf("daijy5: herehere6")
 		}
+		log.Printf("daijy5: herehere7")
 	}
+	log.Printf("daijy5: herehere8")
 
-	log.Printf("daijy3: herehere")
 	// For range Query we expect always a Matrix value type.
 	if q.t == RangeQuery {
 		log.Printf("daijy5: herehere")
