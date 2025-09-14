@@ -134,6 +134,7 @@ func (t *scalarTable) toVector(ctx context.Context, pool *model.VectorPool) mode
 				result.AppendHistogram(pool, v.ID, h)
 			}
 		case MixedTypeValue:
+			mixedvalue++
 			warnings.AddToContext(annotations.NewMixedFloatsHistogramsAggWarning(posrange.PositionRange{}), ctx)
 		}
 	}
