@@ -575,7 +575,9 @@ loop:
 			return newErrResult(ret, ctx.Err())
 		default:
 			r, err := q.Query.exec.Next(ctx)
-			log.Printf("daijy7 len(r), %d, %d, %d", len(r), len(r[0].SampleIDs), len(r[0].HistogramIDs))
+			if r != nil {
+				log.Printf("daijy7 len(r), %d, %d, %d", len(r), len(r[0].SampleIDs), len(r[0].HistogramIDs))
+			}
 			if err != nil {
 				return newErrResult(ret, err)
 			}
