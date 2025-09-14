@@ -572,7 +572,6 @@ loop:
 	for {
 		select {
 		case <-ctx.Done():
-			log.Printf("daijy5: herehere1")
 			return newErrResult(ret, ctx.Err())
 		default:
 			r, err := q.Query.exec.Next(ctx)
@@ -580,17 +579,16 @@ loop:
 			if err != nil {
 				return newErrResult(ret, err)
 			}
-			log.Printf("daijy5: herehere2")
 			if r == nil {
 				break loop
 			}
-			log.Printf("daijy5: herehere3")
 
 			// Case where Series call might return nil, but samples are present.
 			// For example scalar(http_request_total) where http_request_total has multiple values.
 			if len(series) == 0 && len(r) != 0 {
 				series = make([]promql.Series, len(r[0].Samples))
 			}
+			log.Printf("daijy5: herehere4")
 
 			for _, vector := range r {
 				for i, s := range vector.SampleIDs {
@@ -613,7 +611,9 @@ loop:
 				}
 				q.Query.exec.GetPool().PutStepVector(vector)
 			}
+			log.Printf("daijy5: herehere5")
 			q.Query.exec.GetPool().PutVectors(r)
+			log.Printf("daijy5: herehere6")
 		}
 	}
 
