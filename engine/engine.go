@@ -577,11 +577,9 @@ loop:
 			r, err := q.Query.exec.Next(ctx)
 			log.Printf("daijy7 len(r), %d, %d, %d", len(r), len(r[0].SampleIDs), len(r[0].HistogramIDs))
 			if err != nil {
-				log.Printf("daijy here2")
 				return newErrResult(ret, err)
 			}
 			if r == nil {
-				log.Printf("daijy here1")
 				break loop
 			}
 
@@ -612,6 +610,7 @@ loop:
 				}
 				q.Query.exec.GetPool().PutStepVector(vector)
 			}
+			log.Printf("daijy here1")
 			q.Query.exec.GetPool().PutVectors(r)
 		}
 	}
