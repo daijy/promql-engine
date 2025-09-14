@@ -119,9 +119,11 @@ var counter2 int = 0
 
 func (t *scalarTable) toVector(ctx context.Context, pool *model.VectorPool) model.StepVector {
 	result := pool.GetStepVector(t.ts)
+	var novalue int = 0
 	for i, v := range t.outputs {
 		switch t.accumulators[i].ValueType() {
 		case NoValue:
+			novalue++
 			continue
 		case SingleTypeValue:
 			f, h := t.accumulators[i].Value()
@@ -135,7 +137,7 @@ func (t *scalarTable) toVector(ctx context.Context, pool *model.VectorPool) mode
 		}
 	}
 	if counter2 == 0 {
-		log.Printf("jidai8: len(result.SampleIDs), %d, len(result.HistogramIDs), %d", len(result.SampleIDs), len(result.HistogramIDs))
+		log.Printf("jidai8: len(result.SampleIDs), %d, len(result.HistogramIDs), %d, novalue, %d", len(result.SampleIDs), len(result.HistogramIDs), novalue)
 		counter2++
 	}
 	return result
