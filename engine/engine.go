@@ -572,17 +572,19 @@ loop:
 	for {
 		select {
 		case <-ctx.Done():
+			log.Printf("daijy5: herehere1")
 			return newErrResult(ret, ctx.Err())
 		default:
 			r, err := q.Query.exec.Next(ctx)
 			log.Printf("daijy7 len(r), %d, %d, %d", len(r), len(r[0].SampleIDs), len(r[0].HistogramIDs))
 			if err != nil {
-				log.Printf("daijy5: herehere")
 				return newErrResult(ret, err)
 			}
+			log.Printf("daijy5: herehere2")
 			if r == nil {
 				break loop
 			}
+			log.Printf("daijy5: herehere3")
 
 			// Case where Series call might return nil, but samples are present.
 			// For example scalar(http_request_total) where http_request_total has multiple values.
