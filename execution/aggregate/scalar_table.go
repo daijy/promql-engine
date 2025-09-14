@@ -119,14 +119,7 @@ var counter2 int = 0
 
 func (t *scalarTable) toVector(ctx context.Context, pool *model.VectorPool) model.StepVector {
 	result := pool.GetStepVector(t.ts)
-	if counter2 == 0 {
-		for i, v := range t.outputs {
-			log.Printf("jidai8: %s: %d", i, v.Metric.String(), v.ID)
-		}
-		counter2++
-	}
 	for i, v := range t.outputs {
-
 		switch t.accumulators[i].ValueType() {
 		case NoValue:
 			continue
@@ -140,6 +133,10 @@ func (t *scalarTable) toVector(ctx context.Context, pool *model.VectorPool) mode
 		case MixedTypeValue:
 			warnings.AddToContext(annotations.NewMixedFloatsHistogramsAggWarning(posrange.PositionRange{}), ctx)
 		}
+	}
+	if counter2 == 0 {
+		log.Printf("jidai8: len(result.SampleIDs), %d, len(result.HistogramIDs), %d", len(result.SampleIDs), len(result.HistogramIDs))
+		counter2++
 	}
 	return result
 }
