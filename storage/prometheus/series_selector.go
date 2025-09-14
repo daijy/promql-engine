@@ -5,6 +5,7 @@ package prometheus
 
 import (
 	"context"
+	"log"
 	"sync"
 
 	"github.com/thanos-io/promql-engine/execution/warnings"
@@ -78,6 +79,7 @@ func seriesShard(series []SignedSeries, index int, numShards int) []SignedSeries
 	if end > len(series) {
 		end = len(series)
 	}
+	log.Printf("Series shard %d/%d: %d series (from %d to %d)", index, numShards, end-start, start, end)
 
 	slice := series[start:end]
 	shard := make([]SignedSeries, len(slice))

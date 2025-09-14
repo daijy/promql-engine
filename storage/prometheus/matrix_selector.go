@@ -151,7 +151,6 @@ func (o *matrixSelector) GetPool() *model.VectorPool {
 }
 
 func (o *matrixSelector) Next(ctx context.Context) ([]model.StepVector, error) {
-	//log.Printf("daijy10: matrixSelector start")
 	start := time.Now()
 	defer func() { o.AddExecutionTimeTaken(time.Since(start)) }()
 
@@ -220,7 +219,6 @@ func (o *matrixSelector) Next(ctx context.Context) ([]model.StepVector, error) {
 		o.currentStep += o.step * int64(o.numSteps)
 		o.currentSeries = 0
 	}
-	//log.Printf("daijy10: matrixSelector end")
 	return vectors, nil
 }
 
@@ -285,7 +283,6 @@ func (o *matrixSelector) loadSeries(ctx context.Context) error {
 				}
 			}
 		}
-		// log.Printf("daijy10: GetSeries end %d", data_points)
 	})
 	return err
 }
