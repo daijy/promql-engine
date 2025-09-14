@@ -610,9 +610,9 @@ loop:
 				}
 				q.Query.exec.GetPool().PutStepVector(vector)
 			}
-			log.Printf("daijy here1")
 			q.Query.exec.GetPool().PutVectors(r)
 		}
+		log.Printf("daijy here2")
 	}
 	log.Printf("daijy8: len(series), %d", len(series))
 
