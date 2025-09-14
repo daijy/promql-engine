@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"runtime/debug"
 	"sync"
 	"time"
 
@@ -66,7 +67,6 @@ func (c *concurrencyOperator) Next(ctx context.Context) ([]model.StepVector, err
 
 	select {
 	case <-ctx.Done():
-		log.Printf("jidai herehere9")
 		return nil, ctx.Err()
 	default:
 	}
@@ -78,15 +78,14 @@ func (c *concurrencyOperator) Next(ctx context.Context) ([]model.StepVector, err
 
 	r, ok := <-c.buffer
 	if !ok {
-		log.Printf("jidai herehere10")
+		log.Printf("jidai herehere9")
+		debug.PrintStack()
 		return nil, nil
 	}
 	if r.err != nil {
-		log.Printf("jidai herehere11")
 		return nil, r.err
 	}
 
-	log.Printf("jidai herehere12")
 	return r.stepVector, nil
 }
 
