@@ -9,7 +9,6 @@ import (
 	"log/slog"
 	"math"
 	"runtime"
-	"runtime/debug"
 	"slices"
 	"sort"
 	"time"
@@ -440,8 +439,6 @@ func (e *Engine) NewInstantQuery(ctx context.Context, q storage.Queryable, opts 
 
 // NewRangeQuery implements the promql.Engine interface.
 func (e *Engine) NewRangeQuery(ctx context.Context, q storage.Queryable, opts promql.QueryOpts, qs string, start, end time.Time, step time.Duration) (promql.Query, error) {
-	debug.PrintStack()
-	log.Printf("daijy enter thanos query %T", q)
 	return e.MakeRangeQuery(ctx, q, fromPromQLOpts(opts), qs, start, end, step)
 }
 
