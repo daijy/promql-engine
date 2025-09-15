@@ -227,7 +227,7 @@ func (o *matrixSelector) Next(ctx context.Context) ([]model.StepVector, error) {
 func (o *matrixSelector) loadSeries(ctx context.Context) error {
 	var err error
 	o.once.Do(func() {
-		log.Printf("daijy10: GetSeries start: %d", o.shard)
+		log.Printf("daijy10: GetSeries start: %d, %p", o.shard, o.storage)
 		series, loadErr := o.storage.GetSeries(ctx, o.shard, o.numShards)
 		if loadErr != nil {
 			err = loadErr
