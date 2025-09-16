@@ -6,6 +6,7 @@ package prometheus
 import (
 	"context"
 	"fmt"
+	"log"
 	"math"
 	"strings"
 	"sync"
@@ -166,9 +167,11 @@ func (o *matrixSelector) Next(ctx context.Context) ([]model.StepVector, error) {
 
 		return nil, nil
 	}
+	log.Printf("loadSeries start")
 	if err := o.loadSeries(ctx); err != nil {
 		return nil, err
 	}
+	log.Printf("loadSeries stop")
 
 	ts := o.currentStep
 	vectors := o.vectorPool.GetVectorBatch()
