@@ -172,14 +172,17 @@ func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 		a.lastBatch = nil
 	}
 	for {
+		var next []model.StepVector
 		if batch_counter == 0 {
 			f, _ := os.Create("/data/6.hprof")
 			pprof.StartCPUProfile(f)
-		}
-		next, err := a.next.Next(ctx)
-		if batch_counter == 0 {
+			next, err = a.next.Next(ctx)
 			pprof.StopCPUProfile()
+			f.Close()
+		} else {
+			next, err = a.next.Next(ctx)
 		}
+		batch_counter++
 		for _, a := range next {
 			num_steps++
 			counter += len(a.Samples)
