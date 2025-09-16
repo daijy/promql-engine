@@ -8,6 +8,8 @@ import (
 	"fmt"
 	"log"
 	"math"
+	"os"
+	"runtime/pprof"
 	"sync"
 	"time"
 
@@ -123,6 +125,7 @@ func (writer logWriter) Write(bytes []byte) (int, error) {
 
 var counter int = 0
 var num_steps int = 0
+var batch_counter int = 0
 
 func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 	log.Printf("jidai start aggregate")
@@ -163,17 +166,20 @@ func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 	}
 	// If we have a last batch from the previous call, process it first.
 	if a.lastBatch != nil {
-		log.Print("daijy12: here3")
 		if err := a.aggregate(ctx, a.lastBatch); err != nil {
 			return nil, err
 		}
-		log.Print("daijy12: here4")
 		a.lastBatch = nil
 	}
 	for {
-		log.Print("daijy12: here1")
+		if batch_counter == 0 {
+			f, _ := os.Create("/data/6.hprof")
+			pprof.StartCPUProfile(f)
+		}
 		next, err := a.next.Next(ctx)
-		log.Print("daijy12: here2")
+		if batch_counter == 0 {
+			pprof.StopCPUProfile()
+		}
 		for _, a := range next {
 			num_steps++
 			counter += len(a.Samples)
