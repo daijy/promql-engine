@@ -57,6 +57,7 @@ func (o *seriesSelector) GetSeries(ctx context.Context, shard int, numShards int
 
 func (o *seriesSelector) loadSeries(ctx context.Context) error {
 	seriesSet := o.storage.Select(ctx, false, &o.hints, o.matchers...)
+	log.Printf("jidai 11 storage.Select end")
 	i := 0
 	for seriesSet.Next() {
 		s := seriesSet.At()
@@ -66,6 +67,7 @@ func (o *seriesSelector) loadSeries(ctx context.Context) error {
 		})
 		i++
 	}
+	log.Printf("jidai 12 forloop end")
 
 	for _, w := range seriesSet.Warnings() {
 		warnings.AddToContext(w, ctx)
