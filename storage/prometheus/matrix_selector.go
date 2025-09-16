@@ -167,11 +167,10 @@ func (o *matrixSelector) Next(ctx context.Context) ([]model.StepVector, error) {
 
 		return nil, nil
 	}
-	log.Printf("loadSeries start")
+
 	if err := o.loadSeries(ctx); err != nil {
 		return nil, err
 	}
-	log.Printf("loadSeries stop")
 
 	ts := o.currentStep
 	vectors := o.vectorPool.GetVectorBatch()
@@ -229,6 +228,7 @@ func (o *matrixSelector) Next(ctx context.Context) ([]model.StepVector, error) {
 func (o *matrixSelector) loadSeries(ctx context.Context) error {
 	var err error
 	o.once.Do(func() {
+		log.Printf("jidai 11 loadSeries start")
 		series, loadErr := o.storage.GetSeries(ctx, o.shard, o.numShards)
 		if loadErr != nil {
 			err = loadErr
@@ -284,6 +284,7 @@ func (o *matrixSelector) loadSeries(ctx context.Context) error {
 				}
 			}
 		}
+		log.Printf("jidai 11 loadSeries stop")
 	})
 	return err
 }
