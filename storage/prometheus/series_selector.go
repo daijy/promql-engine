@@ -51,7 +51,6 @@ func (o *seriesSelector) GetSeries(ctx context.Context, shard int, numShards int
 	if err != nil {
 		return nil, err
 	}
-
 	return seriesShard(o.series, shard, numShards), nil
 }
 
