@@ -229,7 +229,6 @@ func (o *matrixSelector) loadSeries(ctx context.Context) error {
 	var err error
 	o.once.Do(func() {
 		series, loadErr := o.storage.GetSeries(ctx, o.shard, o.numShards)
-		log.Printf("jidai 11 GetSeries end")
 		if loadErr != nil {
 			err = loadErr
 			return
