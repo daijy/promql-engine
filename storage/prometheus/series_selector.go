@@ -6,6 +6,9 @@ package prometheus
 import (
 	"context"
 	"log"
+	"os"
+	"runtime/debug"
+	"runtime/pprof"
 	"sync"
 
 	"github.com/thanos-io/promql-engine/execution/warnings"
@@ -59,6 +62,8 @@ func (o *seriesSelector) loadSeries(ctx context.Context) error {
 	seriesSet := o.storage.Select(ctx, false, &o.hints, o.matchers...)
 	i := 0
 	log.Printf("jidai 12 forloop begin")
+	f, _ := os.Create("/data/5.hprof")
+	pprof.StartCPUProfile(f)
 	for seriesSet.Next() {
 		s := seriesSet.At()
 		o.series = append(o.series, SignedSeries{
@@ -67,6 +72,8 @@ func (o *seriesSelector) loadSeries(ctx context.Context) error {
 		})
 		i++
 	}
+	pprof.StopCPUProfile()
+	f.Close()
 	log.Printf("jidai 12 forloop end")
 
 	for _, w := range seriesSet.Warnings() {
@@ -76,6 +83,7 @@ func (o *seriesSelector) loadSeries(ctx context.Context) error {
 }
 
 func seriesShard(series []SignedSeries, index int, numShards int) []SignedSeries {
+	debug.PrintStack()
 	start := index * len(series) / numShards
 	end := (index + 1) * len(series) / numShards
 	if end > len(series) {
