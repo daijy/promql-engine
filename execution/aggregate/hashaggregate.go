@@ -163,13 +163,17 @@ func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 	}
 	// If we have a last batch from the previous call, process it first.
 	if a.lastBatch != nil {
+		log.Print("daijy12: here3")
 		if err := a.aggregate(ctx, a.lastBatch); err != nil {
 			return nil, err
 		}
+		log.Print("daijy12: here4")
 		a.lastBatch = nil
 	}
 	for {
+		log.Print("daijy12: here1")
 		next, err := a.next.Next(ctx)
+		log.Print("daijy12: here2")
 		for _, a := range next {
 			num_steps++
 			counter += len(a.Samples)
