@@ -179,6 +179,7 @@ func NewWithScanners(opts Opts, scanners engstorage.Scanners) *Engine {
 			decodingConcurrency = 1
 		}
 	}
+	decodingConcurrency = 1
 	selectorBatchSize := opts.SelectorBatchSize
 
 	var queryTracker promql.QueryTracker = nopQueryTracker{}
