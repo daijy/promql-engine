@@ -5,7 +5,6 @@ package prometheus
 
 import (
 	"context"
-	"log"
 	"sync"
 
 	"github.com/prometheus/prometheus/model/labels"
@@ -41,9 +40,7 @@ func (f *filteredSelector) GetSeries(ctx context.Context, shard, numShards int) 
 }
 
 func (f *filteredSelector) loadSeries(ctx context.Context) error {
-	log.Print("begin loadSeries")
 	series, err := f.selector.GetSeries(ctx, 0, 1)
-	log.Print("selector.GetSeries done")
 	if err != nil {
 		return err
 	}
@@ -59,7 +56,6 @@ func (f *filteredSelector) loadSeries(ctx context.Context) error {
 			i++
 		}
 	}
-	log.Print("loadSeries done")
 
 	return nil
 }
