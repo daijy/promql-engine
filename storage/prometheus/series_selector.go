@@ -6,6 +6,7 @@ package prometheus
 import (
 	"context"
 	"log"
+	"runtime/debug"
 	"sync"
 
 	"github.com/thanos-io/promql-engine/execution/warnings"
@@ -74,6 +75,7 @@ func (o *seriesSelector) loadSeries(ctx context.Context) error {
 }
 
 func seriesShard(series []SignedSeries, index int, numShards int) []SignedSeries {
+	debug.PrintStack()
 	start := index * len(series) / numShards
 	end := (index + 1) * len(series) / numShards
 	if end > len(series) {
