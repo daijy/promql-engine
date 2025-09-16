@@ -57,8 +57,8 @@ func (o *seriesSelector) GetSeries(ctx context.Context, shard int, numShards int
 
 func (o *seriesSelector) loadSeries(ctx context.Context) error {
 	seriesSet := o.storage.Select(ctx, false, &o.hints, o.matchers...)
-	log.Printf("jidai 11 storage.Select end")
 	i := 0
+	log.Printf("jidai 12 forloop begin")
 	for seriesSet.Next() {
 		s := seriesSet.At()
 		o.series = append(o.series, SignedSeries{
