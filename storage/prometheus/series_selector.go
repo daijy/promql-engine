@@ -6,10 +6,7 @@ package prometheus
 import (
 	"context"
 	"log"
-	"os"
-	"runtime/pprof"
 	"sync"
-	"time"
 
 	"github.com/thanos-io/promql-engine/execution/warnings"
 
@@ -61,13 +58,6 @@ func (o *seriesSelector) loadSeries(ctx context.Context) error {
 	seriesSet := o.storage.Select(ctx, false, &o.hints, o.matchers...)
 	i := 0
 	log.Printf("jidai 12 forloop begin, %T", seriesSet)
-	var f *os.File
-	go func() {
-		<-time.After(1 * time.Second)
-		log.Print("profiler start")
-		f, _ = os.Create("/data/5.hprof")
-		pprof.StartCPUProfile(f)
-	}()
 	for seriesSet.Next() {
 		s := seriesSet.At()
 		o.series = append(o.series, SignedSeries{
@@ -76,8 +66,6 @@ func (o *seriesSelector) loadSeries(ctx context.Context) error {
 		})
 		i++
 	}
-	pprof.StopCPUProfile()
-	f.Close()
 	log.Printf("jidai 12 forloop end %d, %d", len(o.series), i)
 
 	for _, w := range seriesSet.Warnings() {
