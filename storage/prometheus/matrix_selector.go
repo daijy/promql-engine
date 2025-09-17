@@ -342,7 +342,6 @@ func (m *matrixScanner) selectPoints(
 	}
 
 	appendedPointBeforeMint := m.buffer.Len() > 0
-	log.Printf("here111 %T", m.iterator)
 	for valType := m.iterator.Next(); valType != chunkenc.ValNone; valType = m.iterator.Next() {
 		switch valType {
 		case chunkenc.ValHistogram, chunkenc.ValFloatHistogram:
