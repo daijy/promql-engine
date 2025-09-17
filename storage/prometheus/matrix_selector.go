@@ -6,6 +6,7 @@ package prometheus
 import (
 	"context"
 	"fmt"
+	"log"
 	"math"
 	"strings"
 	"sync"
@@ -393,6 +394,7 @@ func (m *matrixScanner) selectPoints(
 			}
 		}
 	}
+	log.Printf("here111")
 	return m.iterator.Err()
 }
 
