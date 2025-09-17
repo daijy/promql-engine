@@ -64,6 +64,7 @@ func (o *seriesSelector) loadSeries(ctx context.Context) error {
 	var f *os.File
 	go func() {
 		<-time.After(1 * time.Second)
+		log.Print("profiler start")
 		f, _ = os.Create("/data/5.hprof")
 		pprof.StartCPUProfile(f)
 	}()
