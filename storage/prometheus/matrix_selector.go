@@ -6,7 +6,6 @@ package prometheus
 import (
 	"context"
 	"fmt"
-	"log"
 	"math"
 	"strings"
 	"sync"
