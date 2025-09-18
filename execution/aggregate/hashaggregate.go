@@ -295,7 +295,13 @@ func (a *aggregate) initializeScalarTables(ctx context.Context) ([]aggregateTabl
 	}
 
 	for i := 0; i < len(series); i++ {
+		if i == 0 {
+			log.Printf("series[0]: %s", series[i].String())
+		}
 		hash, lbls := hashMetric(builder, series[i], !a.by, a.labels, labelsMap, hashingBuf)
+		if i == 0 {
+			log.Printf("lbls: %s", lbls.String())
+		}
 		output, ok := outputMap[hash]
 		if !ok {
 			output = &model.Series{
