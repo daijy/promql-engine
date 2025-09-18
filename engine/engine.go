@@ -562,7 +562,7 @@ func (q *compatibilityQuery) Exec(ctx context.Context) (ret *promql.Result) {
 
 	log.Print("Query.exec.Series start")
 	resultSeries, err := q.Query.exec.Series(ctx)
-	log.Print("Query.exec.Series end")
+	log.Printf("Query.exec.Series end %d", len(resultSeries))
 	if err != nil {
 		return newErrResult(ret, err)
 	}
