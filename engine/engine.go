@@ -560,7 +560,9 @@ func (q *compatibilityQuery) Exec(ctx context.Context) (ret *promql.Result) {
 	defer cancel()
 	q.cancel = cancel
 
+	log.Print("Query.exec.Series start")
 	resultSeries, err := q.Query.exec.Series(ctx)
+	log.Print("Query.exec.Series end")
 	if err != nil {
 		return newErrResult(ret, err)
 	}
@@ -617,6 +619,7 @@ loop:
 			q.Query.exec.GetPool().PutVectors(r)
 		}
 	}
+	log.Print("Query.exec forloop end")
 
 	// For range Query we expect always a Matrix value type.
 	if q.t == RangeQuery {
