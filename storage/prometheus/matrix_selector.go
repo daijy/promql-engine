@@ -258,7 +258,7 @@ func (o *matrixSelector) loadSeries(ctx context.Context) error {
 
 		var zero_series int = 0
 		var total_counter int = 0
-		for i, s := range o.scanners {
+		for _, s := range o.scanners {
 			var counter int = 0
 			for valType := s.iterator.Next(); valType != chunkenc.ValNone; valType = s.iterator.Next() {
 				counter++
