@@ -123,7 +123,8 @@ func (writer logWriter) Write(bytes []byte) (int, error) {
 	return fmt.Print(time.Now().UTC().Format("2006-01-02T15:04:05.999Z") + string(bytes))
 }
 
-var counter int = 0
+var input_counter int = 0
+var output_counter int = 0
 var num_steps int = 0
 var batch_counter int = 0
 
@@ -184,8 +185,9 @@ func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 		}
 		batch_counter++
 		for _, a := range next {
+			input_counter += len(a.Samples)
 			num_steps++
-			counter += len(a.Samples)
+			output_counter += len(a.Samples)
 		}
 		if err != nil {
 			return nil, err
@@ -204,7 +206,7 @@ func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 		a.lastBatch = next
 		break
 	}
-	log.Printf("jidai1: counter %d num_steps %d", counter, num_steps)
+	log.Printf("jidai1: input_counter %d, output_counter %d, num_steps %d", input_counter, output_counter, num_steps)
 
 	if a.tables[0].timestamp() == math.MinInt64 {
 		return nil, nil
