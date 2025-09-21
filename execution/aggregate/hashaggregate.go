@@ -228,10 +228,8 @@ func (a *aggregate) initializeTables(ctx context.Context) error {
 	)
 
 	if a.by && len(a.labels) == 0 {
-		log.Print("initializeVectorizedTables")
 		tables, series, err = a.initializeVectorizedTables(ctx)
 	} else {
-		log.Print("initializeScalarTables")
 		tables, series, err = a.initializeScalarTables(ctx)
 	}
 	if err != nil {
@@ -263,7 +261,7 @@ func (a *aggregate) initializeVectorizedTables(ctx context.Context) ([]aggregate
 
 func (a *aggregate) initializeScalarTables(ctx context.Context) ([]aggregateTable, []labels.Labels, error) {
 	series, err := a.next.Series(ctx)
-	log.Printf("daijy6: len(series), %d, %t", len(series), !a.by)
+	log.Printf("daijy6: len of input series: len(series), %d", len(series))
 	if err != nil {
 		return nil, nil, err
 	}
@@ -286,6 +284,9 @@ func (a *aggregate) initializeScalarTables(ctx context.Context) ([]aggregateTabl
 
 	for i := 0; i < len(series); i++ {
 		hash, lbls := hashMetric(builder, series[i], !a.by, a.labels, labelsMap, hashingBuf)
+		if i <= 10 {
+			log.Printf("daijy7: input series: %s, output series: %s", series[i].String(), lbls.String())
+		}
 		output, ok := outputMap[hash]
 		if !ok {
 			output = &model.Series{
@@ -298,6 +299,7 @@ func (a *aggregate) initializeScalarTables(ctx context.Context) ([]aggregateTabl
 
 		inputCache[i] = output.ID
 	}
+	log.Printf("daijy7: length of inputCache: %d", len(inputCache))
 	tables, err := newScalarTables(a.stepsBatch, inputCache, outputCache, a.aggregation)
 	if err != nil {
 		return nil, nil, err
