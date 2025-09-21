@@ -268,7 +268,7 @@ func (o *matrixSelector) loadSeries(ctx context.Context) error {
 				zero_series++
 			}
 		}
-		log.Printf("daijy2: zero_series:%d, avg length %f", zero_series, float64(total_counter)/float64(len(o.scanners)-zero_series))
+		log.Printf("daijy2: zero_series:%d, total data points: %d, avg length %f", zero_series, total_counter, float64(total_counter)/float64(len(o.scanners)-zero_series))
 		numSeries := int64(len(o.series))
 		if o.seriesBatchSize == 0 || numSeries < o.seriesBatchSize {
 			o.seriesBatchSize = numSeries
