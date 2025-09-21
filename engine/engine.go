@@ -615,17 +615,6 @@ loop:
 			q.Query.exec.GetPool().PutVectors(r)
 		}
 	}
-	var size_floats int = 0
-	var size_histograms int = 0
-	var non_empty_series int = 0
-	for i := range series {
-		size_floats += len(series[i].Floats)
-		size_histograms += len(series[i].Histograms)
-		if len(series[i].Floats)+len(series[i].Histograms) > 0 {
-			non_empty_series++
-		}
-	}
-	log.Printf("daijy5: len(series): %d, size_floats: %d, size_histograms: %d, non_empty_series: %d", len(series), size_floats, size_histograms, non_empty_series)
 
 	// For range Query we expect always a Matrix value type.
 	if q.t == RangeQuery {

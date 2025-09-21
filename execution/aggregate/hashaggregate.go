@@ -228,8 +228,10 @@ func (a *aggregate) initializeTables(ctx context.Context) error {
 	)
 
 	if a.by && len(a.labels) == 0 {
+		log.Print("initializeVectorizedTables")
 		tables, series, err = a.initializeVectorizedTables(ctx)
 	} else {
+		log.Print("initializeScalarTables")
 		tables, series, err = a.initializeScalarTables(ctx)
 	}
 	if err != nil {
