@@ -621,9 +621,7 @@ loop:
 		size_floats += len(series[i].Floats)
 		size_histograms += len(series[i].Histograms)
 	}
-	log.Printf("daijy5: len(series), %d", len(series))
-	log.Printf("daijy5: size_floats: %d, size_histograms: %d", size_floats, size_histograms)
-	log.Print("Query.exec forloop end")
+	log.Printf("daijy5: len(series): %d, size_floats: %d, size_histograms: %d", len(series), size_floats, size_histograms)
 
 	// For range Query we expect always a Matrix value type.
 	if q.t == RangeQuery {

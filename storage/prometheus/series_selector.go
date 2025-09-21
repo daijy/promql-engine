@@ -57,7 +57,7 @@ func (o *seriesSelector) GetSeries(ctx context.Context, shard int, numShards int
 func (o *seriesSelector) loadSeries(ctx context.Context) error {
 	seriesSet := o.storage.Select(ctx, false, &o.hints, o.matchers...)
 	i := 0
-	log.Printf("jidai 12 forloop begin, %T", seriesSet)
+	log.Print("jidai 12 forloop begin")
 	for seriesSet.Next() {
 		s := seriesSet.At()
 		o.series = append(o.series, SignedSeries{
@@ -66,7 +66,7 @@ func (o *seriesSelector) loadSeries(ctx context.Context) error {
 		})
 		i++
 	}
-	log.Printf("jidai 12 forloop end %d, %d", len(o.series), i)
+	log.Printf("jidai 12 forloop end num input series %d", len(o.series))
 
 	for _, w := range seriesSet.Warnings() {
 		warnings.AddToContext(w, ctx)
