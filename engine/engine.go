@@ -578,10 +578,6 @@ loop:
 			return newErrResult(ret, ctx.Err())
 		default:
 			r, err := q.Query.exec.Next(ctx)
-			if r != nil {
-				log.Printf("daijy5: len(series), %d", len(series))
-				log.Printf("daijy5: len(series[0].Floats): %d, len(series[0].Histograms): %d", len(series[0].Floats), len(series[0].Histograms))
-			}
 			if err != nil {
 				return newErrResult(ret, err)
 			}
@@ -619,12 +615,18 @@ loop:
 			q.Query.exec.GetPool().PutVectors(r)
 		}
 	}
+	var size_floats int = 0
+	var size_histograms int = 0
+	for i := range series {
+		size_floats += len(series[i].Floats)
+		size_histograms += len(series[i].Histograms)
+	}
+	log.Printf("daijy5: len(series), %d", len(series))
+	log.Printf("daijy5: size_floats: %d, size_histograms: %d", size_floats, size_histograms)
 	log.Print("Query.exec forloop end")
 
 	// For range Query we expect always a Matrix value type.
 	if q.t == RangeQuery {
-		log.Printf("daijy5: len(series), %d", len(series))
-		log.Printf("daijy5: len(series[0].Floats): %d, len(series[0].Histograms): %d", len(series[0].Floats), len(series[0].Histograms))
 		matrix := make(promql.Matrix, 0, len(series))
 		for _, s := range series {
 			if len(s.Floats)+len(s.Histograms) == 0 {

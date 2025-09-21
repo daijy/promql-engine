@@ -8,8 +8,6 @@ import (
 	"fmt"
 	"log"
 	"math"
-	"os"
-	"runtime/pprof"
 	"sync"
 	"time"
 
@@ -124,9 +122,7 @@ func (writer logWriter) Write(bytes []byte) (int, error) {
 }
 
 var input_counter int = 0
-var output_counter int = 0
 var num_steps int = 0
-var batch_counter int = 0
 
 func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 	log.Printf("jidai start aggregate")
@@ -174,20 +170,10 @@ func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 	}
 	for {
 		var next []model.StepVector
-		if batch_counter == 0 {
-			f, _ := os.Create("/data/6.hprof")
-			pprof.StartCPUProfile(f)
-			next, err = a.next.Next(ctx)
-			pprof.StopCPUProfile()
-			f.Close()
-		} else {
-			next, err = a.next.Next(ctx)
-		}
-		batch_counter++
+		next, err = a.next.Next(ctx)
 		for _, a := range next {
 			input_counter += len(a.Samples)
 			num_steps++
-			output_counter += len(a.Samples)
 		}
 		if err != nil {
 			return nil, err
@@ -206,7 +192,7 @@ func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 		a.lastBatch = next
 		break
 	}
-	log.Printf("jidai1: input_counter %d, output_counter %d, num_steps %d", input_counter, output_counter, num_steps)
+	log.Printf("jidai1: input_counter %d, num_steps %d", input_counter, num_steps)
 
 	if a.tables[0].timestamp() == math.MinInt64 {
 		return nil, nil
