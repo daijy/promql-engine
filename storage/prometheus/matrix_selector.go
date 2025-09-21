@@ -6,6 +6,7 @@ package prometheus
 import (
 	"context"
 	"fmt"
+	"log"
 	"math"
 	"strings"
 	"sync"
@@ -256,12 +257,13 @@ func (o *matrixSelector) loadSeries(ctx context.Context) error {
 			}
 			o.series[i] = lbls
 		}
-		// for _, s := range o.scanners {
-		// 	for valType := s.iterator.Next(); valType != chunkenc.ValNone; valType = s.iterator.Next() {
-		// 		// Process each sample in the iterator.
-		// 		data_points++
-		// 	}
-		// }
+		for i, s := range o.scanners {
+			var counter int = 0
+			for valType := s.iterator.Next(); valType != chunkenc.ValNone; valType = s.iterator.Next() {
+				counter++
+			}
+			log.Printf("daijy2: series %s: %d", series[i].Labels().String(), counter)
+		}
 
 		numSeries := int64(len(o.series))
 		if o.seriesBatchSize == 0 || numSeries < o.seriesBatchSize {

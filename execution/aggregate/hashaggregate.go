@@ -284,9 +284,6 @@ func (a *aggregate) initializeScalarTables(ctx context.Context) ([]aggregateTabl
 
 	for i := 0; i < len(series); i++ {
 		hash, lbls := hashMetric(builder, series[i], !a.by, a.labels, labelsMap, hashingBuf)
-		if i <= 10 {
-			log.Printf("daijy7: input series: %s, output series: %s", series[i].String(), lbls.String())
-		}
 		output, ok := outputMap[hash]
 		if !ok {
 			output = &model.Series{
@@ -299,7 +296,6 @@ func (a *aggregate) initializeScalarTables(ctx context.Context) ([]aggregateTabl
 
 		inputCache[i] = output.ID
 	}
-	log.Printf("daijy7: length of inputCache: %d", len(inputCache))
 	tables, err := newScalarTables(a.stepsBatch, inputCache, outputCache, a.aggregation)
 	if err != nil {
 		return nil, nil, err
