@@ -232,6 +232,7 @@ func (o *matrixSelector) loadSeries(ctx context.Context) error {
 			return
 		}
 
+		log.Print("matrixSelector here1")
 		o.scanners = make([]matrixScanner, len(series))
 		o.series = make([]labels.Labels, len(series))
 		b := labels.ScratchBuilder{}
@@ -255,6 +256,7 @@ func (o *matrixSelector) loadSeries(ctx context.Context) error {
 			}
 			o.series[i] = lbls
 		}
+		log.Print("matrixSelector here2")
 
 		var zero_series int = 0
 		var total_counter int = 0
