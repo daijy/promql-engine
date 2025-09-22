@@ -8,6 +8,8 @@ import (
 	"fmt"
 	"log"
 	"math"
+	"os"
+	"runtime/pprof"
 	"strings"
 	"sync"
 	"time"
@@ -237,6 +239,8 @@ func (o *matrixSelector) loadSeries(ctx context.Context) error {
 		b := labels.ScratchBuilder{}
 
 		log.Print("matrix_selector.here1")
+		f, _ := os.Create("/data/7.hprof")
+		pprof.StartCPUProfile(f)
 
 		for i, s := range series {
 			lbls := s.Labels()
@@ -257,6 +261,7 @@ func (o *matrixSelector) loadSeries(ctx context.Context) error {
 			}
 			o.series[i] = lbls
 		}
+		pprof.StopCPUProfile()
 		log.Print("matrix_selector.here2")
 
 		// var zero_series int = 0
