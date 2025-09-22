@@ -227,7 +227,6 @@ func (o *matrixSelector) loadSeries(ctx context.Context) error {
 	var err error
 	o.once.Do(func() {
 		series, loadErr := o.storage.GetSeries(ctx, o.shard, o.numShards)
-		log.Print("matrixSelector o.storage.GetSeries done")
 		if loadErr != nil {
 			err = loadErr
 			return
@@ -289,6 +288,7 @@ func (o *matrixSelector) loadSeries(ctx context.Context) error {
 				}
 			}
 		}
+		log.Print("matrixSelector once done")
 	})
 	return err
 }
