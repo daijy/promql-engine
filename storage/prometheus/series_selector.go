@@ -76,9 +76,11 @@ func (o *seriesSelector) loadSeries(ctx context.Context) error {
 
 func seriesShard(series []SignedSeries, index int, numShards int) []SignedSeries {
 	it := series[540118].Iterator(nil)
+	log.Printf("total series count: %d", len(series))
+	log.Print(series[540118].Labels().String())
 	for it.Next() != 0 {
 		ts, v := it.At()
-		log.Printf("series %s: %d = %f", series[540118].Labels().String(), ts, v)
+		log.Printf("%d = %f", ts, v)
 	}
 
 	start := index * len(series) / numShards
