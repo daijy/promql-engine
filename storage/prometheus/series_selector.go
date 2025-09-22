@@ -75,6 +75,16 @@ func (o *seriesSelector) loadSeries(ctx context.Context) error {
 }
 
 func seriesShard(series []SignedSeries, index int, numShards int) []SignedSeries {
+	var series_counter int = 0
+	for _, s := range series {
+		it := s.Series.Iterator(nil)
+		for it.Next() != 0 {
+			series_counter++
+		}
+		if series_counter > 0 {
+			log.Printf("series %s: %d", s.Labels().String(), series_counter)
+		}
+	}
 	start := index * len(series) / numShards
 	end := (index + 1) * len(series) / numShards
 	if end > len(series) {
