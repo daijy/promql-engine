@@ -532,13 +532,13 @@ type compatibilityQuery struct {
 }
 
 func printExecPlan(q promql.Query) {
-	eq, ok := q.(engine.ExplainableQuery)
+	eq, ok := q.(ExplainableQuery)
 	if !ok {
 		fmt.Println("plan unavailable")
 		return
 	}
-	var walk func(node engine.ExplainOutputNode, indent, indentNext string)
-	walk = func(node engine.ExplainOutputNode, indent, indentNext string) {
+	var walk func(node ExplainOutputNode, indent, indentNext string)
+	walk = func(node ExplainOutputNode, indent, indentNext string) {
 		fmt.Printf("%s%s\n", indent, node.OperatorName)
 		for i, child := range node.Children {
 			nextIndent := indentNext + "│  "
