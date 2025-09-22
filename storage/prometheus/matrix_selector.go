@@ -6,10 +6,7 @@ package prometheus
 import (
 	"context"
 	"fmt"
-	"log"
 	"math"
-	"os"
-	"runtime/pprof"
 	"strings"
 	"sync"
 	"time"
@@ -238,10 +235,6 @@ func (o *matrixSelector) loadSeries(ctx context.Context) error {
 		o.series = make([]labels.Labels, len(series))
 		b := labels.ScratchBuilder{}
 
-		log.Print("matrix_selector.here1")
-		f, _ := os.Create("/data/7.hprof")
-		pprof.StartCPUProfile(f)
-
 		for i, s := range series {
 			lbls := s.Labels()
 			if o.functionName != "last_over_time" {
@@ -261,9 +254,6 @@ func (o *matrixSelector) loadSeries(ctx context.Context) error {
 			}
 			o.series[i] = lbls
 		}
-		pprof.StopCPUProfile()
-		f.Close()
-		log.Print("matrix_selector.here2")
 
 		// var zero_series int = 0
 		// var total_counter int = 0
