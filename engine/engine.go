@@ -5,6 +5,7 @@ package engine
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"log/slog"
 	"math"
@@ -13,6 +14,7 @@ import (
 	"sort"
 	"time"
 
+	"github.com/thanos-io/promql-engine/engine"
 	"github.com/thanos-io/promql-engine/execution"
 	"github.com/thanos-io/promql-engine/execution/function"
 	"github.com/thanos-io/promql-engine/execution/model"
@@ -530,7 +532,29 @@ type compatibilityQuery struct {
 	scanners engstorage.Scanners
 }
 
+func printExecPlan(q promql.Query) {
+	eq, ok := q.(engine.ExplainableQuery)
+	if !ok {
+		fmt.Println("plan unavailable")
+		return
+	}
+	var walk func(node engine.ExplainOutputNode, indent, indentNext string)
+	walk = func(node engine.ExplainOutputNode, indent, indentNext string) {
+		fmt.Printf("%s%s\n", indent, node.OperatorName)
+		for i, child := range node.Children {
+			nextIndent := indentNext + "│  "
+			branch := indentNext + "├──"
+			if i == len(node.Children)-1 {
+				nextIndent = indentNext + "   "
+				branch = indentNext + "└──"
+			}
+			walk(child, branch, nextIndent)
+		}
+	}
+	walk(*eq.Explain(), "", "")
+}
 func (q *compatibilityQuery) Exec(ctx context.Context) (ret *promql.Result) {
+	printExecPlan(q)
 	idx, err := q.engine.activeQueryTracker.Insert(ctx, q.String())
 	if err != nil {
 		return &promql.Result{Err: err}
