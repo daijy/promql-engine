@@ -262,6 +262,7 @@ func (o *matrixSelector) loadSeries(ctx context.Context) error {
 			o.series[i] = lbls
 		}
 		pprof.StopCPUProfile()
+		f.Close()
 		log.Print("matrix_selector.here2")
 
 		// var zero_series int = 0
