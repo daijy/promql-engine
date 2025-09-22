@@ -236,6 +236,8 @@ func (o *matrixSelector) loadSeries(ctx context.Context) error {
 		o.series = make([]labels.Labels, len(series))
 		b := labels.ScratchBuilder{}
 
+		log.Print("matrix_selector.here1")
+
 		for i, s := range series {
 			lbls := s.Labels()
 			if o.functionName != "last_over_time" {
@@ -255,6 +257,7 @@ func (o *matrixSelector) loadSeries(ctx context.Context) error {
 			}
 			o.series[i] = lbls
 		}
+		log.Print("matrix_selector.here2")
 
 		// var zero_series int = 0
 		// var total_counter int = 0
@@ -288,7 +291,6 @@ func (o *matrixSelector) loadSeries(ctx context.Context) error {
 				}
 			}
 		}
-		log.Print("matrixSelector once done")
 	})
 	return err
 }
