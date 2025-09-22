@@ -14,7 +14,6 @@ import (
 	"sort"
 	"time"
 
-	"github.com/thanos-io/promql-engine/engine"
 	"github.com/thanos-io/promql-engine/execution"
 	"github.com/thanos-io/promql-engine/execution/function"
 	"github.com/thanos-io/promql-engine/execution/model"
