@@ -18,7 +18,6 @@ package execution
 
 import (
 	"context"
-	"runtime/debug"
 	"sort"
 	"time"
 
@@ -388,7 +387,6 @@ func newDeduplication(ctx context.Context, e logicalplan.Deduplicate, scanners s
 
 func newRemoteExecution(ctx context.Context, e logicalplan.RemoteExecution, opts *query.Options, hints promstorage.SelectHints) (model.VectorOperator, error) {
 	// Create a new remote query scoped to the calculated start time.
-	debug.PrintStack()
 	qry, err := e.Engine.NewRangeQuery(ctx, promql.NewPrometheusQueryOpts(false, opts.LookbackDelta), e.Query, e.QueryRangeStart, e.QueryRangeEnd, opts.Step)
 	if err != nil {
 		return nil, err

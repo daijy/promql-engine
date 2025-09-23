@@ -159,6 +159,7 @@ type DistributedExecutionOptimizer struct {
 }
 
 func (m DistributedExecutionOptimizer) Optimize(plan Node, opts *query.Options) (Node, annotations.Annotations) {
+	log.Print("jidai1 here1")
 	engines := m.Endpoints.Engines()
 	sort.Slice(engines, func(i, j int) bool {
 		return engines[i].MinT() < engines[j].MinT()
@@ -183,6 +184,7 @@ func (m DistributedExecutionOptimizer) Optimize(plan Node, opts *query.Options) 
 	// Preprocess rewrite distributable averages as sum/count
 	var warns = annotations.New()
 	TraverseBottomUp(nil, &plan, func(parent, current *Node) (stop bool) {
+		log.Print("jidai1 here2")
 		if !(isDistributive(current, m.SkipBinaryPushdown, engineLabels, warns) || isAvgAggregation(current)) {
 			return true
 		}
@@ -212,6 +214,7 @@ func (m DistributedExecutionOptimizer) Optimize(plan Node, opts *query.Options) 
 		return !(isDistributive(parent, m.SkipBinaryPushdown, engineLabels, warns) || isAvgAggregation(parent))
 	})
 
+	log.Print("jidai1 here3")
 	// TODO(fpetkovski): Consider changing TraverseBottomUp to pass in a list of parents in the transform function.
 	parents := make(map[*Node]*Node)
 	TraverseBottomUp(nil, &plan, func(parent, current *Node) (stop bool) {
@@ -219,6 +222,7 @@ func (m DistributedExecutionOptimizer) Optimize(plan Node, opts *query.Options) 
 		return false
 	})
 	TraverseBottomUp(nil, &plan, func(parent, current *Node) (stop bool) {
+		log.Print("jidai1 here4")
 		// If the current operation is not distributive, stop the traversal.
 		if !isDistributive(current, m.SkipBinaryPushdown, engineLabels, warns) {
 			return true
@@ -310,6 +314,7 @@ func newRemoteAggregation(rootAggregation *Aggregation, engines []api.RemoteEngi
 // For each engine which matches the time range of the query, it creates a RemoteExecution scoped to the range of the engine.
 // All remote executions are wrapped in a Deduplicate logical node to make sure that results from overlapping engines are deduplicated.
 func (m DistributedExecutionOptimizer) distributeQuery(expr *Node, engines []api.RemoteEngine, opts *query.Options, allowedStartOffset time.Duration) Node {
+	log.Print("start distributeQuery")
 	startOffset := calculateStartOffset(expr, opts.LookbackDelta)
 	if allowedStartOffset < startOffset {
 		return *expr
