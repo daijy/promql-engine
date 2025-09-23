@@ -183,7 +183,6 @@ func (m DistributedExecutionOptimizer) Optimize(plan Node, opts *query.Options) 
 	// Preprocess rewrite distributable averages as sum/count
 	var warns = annotations.New()
 	TraverseBottomUp(nil, &plan, func(parent, current *Node) (stop bool) {
-		log.Printf("jidai111: %t", isDistributive(current, m.SkipBinaryPushdown, engineLabels, warns))
 		if !(isDistributive(current, m.SkipBinaryPushdown, engineLabels, warns) || isAvgAggregation(current)) {
 			return true
 		}
@@ -210,7 +209,6 @@ func (m DistributedExecutionOptimizer) Optimize(plan Node, opts *query.Options) 
 			}
 			return true
 		}
-		log.Printf("jidai222: %t", isDistributive(parent, m.SkipBinaryPushdown, engineLabels, warns))
 		return !(isDistributive(parent, m.SkipBinaryPushdown, engineLabels, warns) || isAvgAggregation(parent))
 	})
 
@@ -527,14 +525,17 @@ func numSteps(start, end time.Time, step time.Duration) int64 {
 }
 
 func isDistributive(expr *Node, skipBinaryPushdown bool, engineLabels map[string]struct{}, warns *annotations.Annotations) bool {
+	log.Print("here1")
 	if expr == nil {
 		return false
 	}
 
 	switch e := (*expr).(type) {
 	case Deduplicate, RemoteExecution:
+		log.Print("here2")
 		return false
 	case *Binary:
+		log.Print("here3")
 		if isBinaryExpressionWithOneScalarSide(e) {
 			return true
 		}
@@ -543,11 +544,14 @@ func isDistributive(expr *Node, skipBinaryPushdown bool, engineLabels map[string
 			isDistributive(&e.LHS, skipBinaryPushdown, engineLabels, warns) &&
 			isDistributive(&e.RHS, skipBinaryPushdown, engineLabels, warns)
 	case *Aggregation:
+		log.Print("here4")
 		// Certain aggregations are currently not supported.
 		if _, ok := distributiveAggregations[e.Op]; !ok {
+			log.Print("here6")
 			return false
 		}
 	case *FunctionCall:
+		log.Print("here5")
 		if e.Func.Name == "label_replace" {
 			targetLabel := UnsafeUnwrapString(e.Args[1])
 			if _, ok := engineLabels[targetLabel]; ok {
