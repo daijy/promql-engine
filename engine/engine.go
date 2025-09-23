@@ -5,6 +5,7 @@ package engine
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"log/slog"
 	"math"
@@ -529,8 +530,29 @@ type compatibilityQuery struct {
 	scanners engstorage.Scanners
 }
 
+func printExecPlan(q promql.Query) {
+	eq, ok := q.(ExplainableQuery)
+	if !ok {
+		fmt.Println("plan unavailable")
+		return
+	}
+	var walk func(node ExplainOutputNode, indent, indentNext string)
+	walk = func(node ExplainOutputNode, indent, indentNext string) {
+		fmt.Printf("%s%s\n", indent, node.OperatorName)
+		for i, child := range node.Children {
+			nextIndent := indentNext + "│  "
+			branch := indentNext + "├──"
+			if i == len(node.Children)-1 {
+				nextIndent = indentNext + "   "
+				branch = indentNext + "└──"
+			}
+			walk(child, branch, nextIndent)
+		}
+	}
+	walk(*eq.Explain(), "", "")
+}
 func (q *compatibilityQuery) Exec(ctx context.Context) (ret *promql.Result) {
-	log.Print("jidai Exec")
+	printExecPlan(q)
 	idx, err := q.engine.activeQueryTracker.Insert(ctx, q.String())
 	if err != nil {
 		return &promql.Result{Err: err}
