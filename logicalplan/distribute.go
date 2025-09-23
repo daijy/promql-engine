@@ -159,7 +159,6 @@ type DistributedExecutionOptimizer struct {
 }
 
 func (m DistributedExecutionOptimizer) Optimize(plan Node, opts *query.Options) (Node, annotations.Annotations) {
-	log.Print("jidai DistributedExecutionOptimizer")
 	engines := m.Endpoints.Engines()
 	sort.Slice(engines, func(i, j int) bool {
 		return engines[i].MinT() < engines[j].MinT()
@@ -187,6 +186,7 @@ func (m DistributedExecutionOptimizer) Optimize(plan Node, opts *query.Options) 
 		if !(isDistributive(current, m.SkipBinaryPushdown, engineLabels, warns) || isAvgAggregation(current)) {
 			return true
 		}
+		log.Print("not distributive")
 		// If the current node is avg(), distribute the operation and
 		// stop the traversal.
 		if aggr, ok := (*current).(*Aggregation); ok {
@@ -225,6 +225,7 @@ func (m DistributedExecutionOptimizer) Optimize(plan Node, opts *query.Options) 
 			return true
 		}
 
+		log.Print("not distributive2")
 		// If the current node is an aggregation, distribute the operation and
 		// stop the traversal.
 		if aggr, ok := (*current).(*Aggregation); ok {
