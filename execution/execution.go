@@ -18,6 +18,7 @@ package execution
 
 import (
 	"context"
+	"log"
 	"sort"
 	"time"
 
@@ -283,8 +284,10 @@ func newAggregateExpression(ctx context.Context, e *logicalplan.Aggregation, sca
 		}
 	}
 	if e.Op == parser.TOPK || e.Op == parser.BOTTOMK {
+		log.Print("NewKHashAggregate")
 		next, err = aggregate.NewKHashAggregate(model.NewVectorPool(opts.StepsBatch), next, paramOp, e.Op, !e.Without, e.Grouping, opts)
 	} else {
+		log.Print("NewHashAggregate")
 		next, err = aggregate.NewHashAggregate(model.NewVectorPool(opts.StepsBatch), next, paramOp, e.Op, !e.Without, e.Grouping, opts)
 	}
 	if err != nil {
