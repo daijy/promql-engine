@@ -159,7 +159,6 @@ type DistributedExecutionOptimizer struct {
 }
 
 func (m DistributedExecutionOptimizer) Optimize(plan Node, opts *query.Options) (Node, annotations.Annotations) {
-	log.Print("jidai1 here1")
 	engines := m.Endpoints.Engines()
 	sort.Slice(engines, func(i, j int) bool {
 		return engines[i].MinT() < engines[j].MinT()
@@ -184,7 +183,6 @@ func (m DistributedExecutionOptimizer) Optimize(plan Node, opts *query.Options) 
 	// Preprocess rewrite distributable averages as sum/count
 	var warns = annotations.New()
 	TraverseBottomUp(nil, &plan, func(parent, current *Node) (stop bool) {
-		log.Print("jidai1 here2")
 		if !(isDistributive(current, m.SkipBinaryPushdown, engineLabels, warns) || isAvgAggregation(current)) {
 			return true
 		}
@@ -214,7 +212,6 @@ func (m DistributedExecutionOptimizer) Optimize(plan Node, opts *query.Options) 
 		return !(isDistributive(parent, m.SkipBinaryPushdown, engineLabels, warns) || isAvgAggregation(parent))
 	})
 
-	log.Print("jidai1 here3")
 	// TODO(fpetkovski): Consider changing TraverseBottomUp to pass in a list of parents in the transform function.
 	parents := make(map[*Node]*Node)
 	TraverseBottomUp(nil, &plan, func(parent, current *Node) (stop bool) {
@@ -222,7 +219,6 @@ func (m DistributedExecutionOptimizer) Optimize(plan Node, opts *query.Options) 
 		return false
 	})
 	TraverseBottomUp(nil, &plan, func(parent, current *Node) (stop bool) {
-		log.Print("jidai1 here4")
 		// If the current operation is not distributive, stop the traversal.
 		if !isDistributive(current, m.SkipBinaryPushdown, engineLabels, warns) {
 			return true
@@ -236,6 +232,7 @@ func (m DistributedExecutionOptimizer) Optimize(plan Node, opts *query.Options) 
 				localAggregation = parser.SUM
 			}
 
+			log.Print("jidai1 here7")
 			remoteAggregation := newRemoteAggregation(aggr, engines)
 			subQueries := m.distributeQuery(&remoteAggregation, engines, m.subqueryOpts(parents, current, opts), minEngineOverlap)
 			*current = &Aggregation{
@@ -257,6 +254,7 @@ func (m DistributedExecutionOptimizer) Optimize(plan Node, opts *query.Options) 
 			return false
 		}
 
+		log.Print("jidai1 here8")
 		*current = m.distributeQuery(current, engines, m.subqueryOpts(parents, current, opts), minEngineOverlap)
 		return true
 	})
