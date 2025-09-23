@@ -5,6 +5,7 @@ package logicalplan
 
 import (
 	"fmt"
+	"log"
 	"math"
 	"slices"
 	"sort"
@@ -158,6 +159,7 @@ type DistributedExecutionOptimizer struct {
 }
 
 func (m DistributedExecutionOptimizer) Optimize(plan Node, opts *query.Options) (Node, annotations.Annotations) {
+	log.Print("jidai DistributedExecutionOptimizer")
 	engines := m.Endpoints.Engines()
 	sort.Slice(engines, func(i, j int) bool {
 		return engines[i].MinT() < engines[j].MinT()
