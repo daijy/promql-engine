@@ -362,6 +362,7 @@ func (e *Engine) MakeRangeQuery(ctx context.Context, q storage.Queryable, opts *
 		DisableDuplicateLabelCheck: e.disableDuplicateLabelChecks,
 	}
 	lplan, warns := logicalplan.NewFromAST(expr, qOpts, planOpts).Optimize(e.getLogicalOptimizers(opts))
+	log.Printf("daijy %s", lplan.Root().String())
 
 	ctx = warnings.NewContext(ctx)
 	defer func() { warns.Merge(warnings.FromContext(ctx)) }()
