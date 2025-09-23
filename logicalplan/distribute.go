@@ -183,10 +183,10 @@ func (m DistributedExecutionOptimizer) Optimize(plan Node, opts *query.Options) 
 	// Preprocess rewrite distributable averages as sum/count
 	var warns = annotations.New()
 	TraverseBottomUp(nil, &plan, func(parent, current *Node) (stop bool) {
+		log.Printf("jidai111: %t", isDistributive(current, m.SkipBinaryPushdown, engineLabels, warns))
 		if !(isDistributive(current, m.SkipBinaryPushdown, engineLabels, warns) || isAvgAggregation(current)) {
 			return true
 		}
-		log.Print("not distributive")
 		// If the current node is avg(), distribute the operation and
 		// stop the traversal.
 		if aggr, ok := (*current).(*Aggregation); ok {
@@ -210,6 +210,7 @@ func (m DistributedExecutionOptimizer) Optimize(plan Node, opts *query.Options) 
 			}
 			return true
 		}
+		log.Printf("jidai222: %t", isDistributive(parent, m.SkipBinaryPushdown, engineLabels, warns))
 		return !(isDistributive(parent, m.SkipBinaryPushdown, engineLabels, warns) || isAvgAggregation(parent))
 	})
 
@@ -225,7 +226,6 @@ func (m DistributedExecutionOptimizer) Optimize(plan Node, opts *query.Options) 
 			return true
 		}
 
-		log.Print("not distributive2")
 		// If the current node is an aggregation, distribute the operation and
 		// stop the traversal.
 		if aggr, ok := (*current).(*Aggregation); ok {
