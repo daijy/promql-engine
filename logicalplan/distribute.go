@@ -525,17 +525,14 @@ func numSteps(start, end time.Time, step time.Duration) int64 {
 }
 
 func isDistributive(expr *Node, skipBinaryPushdown bool, engineLabels map[string]struct{}, warns *annotations.Annotations) bool {
-	log.Print("here1")
 	if expr == nil {
 		return false
 	}
 
 	switch e := (*expr).(type) {
 	case Deduplicate, RemoteExecution:
-		log.Print("here2")
 		return false
 	case *Binary:
-		log.Print("here3")
 		if isBinaryExpressionWithOneScalarSide(e) {
 			return true
 		}
