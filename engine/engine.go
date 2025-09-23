@@ -530,6 +530,7 @@ type compatibilityQuery struct {
 }
 
 func (q *compatibilityQuery) Exec(ctx context.Context) (ret *promql.Result) {
+	log.Print("jidai Exec")
 	idx, err := q.engine.activeQueryTracker.Insert(ctx, q.String())
 	if err != nil {
 		return &promql.Result{Err: err}
