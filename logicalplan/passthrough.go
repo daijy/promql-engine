@@ -4,6 +4,8 @@
 package logicalplan
 
 import (
+	"log"
+
 	"github.com/thanos-io/promql-engine/api"
 	"github.com/thanos-io/promql-engine/query"
 
@@ -43,6 +45,7 @@ func matchingEngineTime(e api.RemoteEngine, opts *query.Options) bool {
 }
 
 func (m PassthroughOptimizer) Optimize(plan Node, opts *query.Options) (Node, annotations.Annotations) {
+	log.Print("PassthroughOptimizer")
 	engines := m.Endpoints.Engines()
 	if len(engines) == 1 {
 		if !matchingEngineTime(engines[0], opts) {
