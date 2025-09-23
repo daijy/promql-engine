@@ -5,6 +5,7 @@ package logicalplan
 
 import (
 	"fmt"
+	"log"
 	"math"
 	"slices"
 	"sort"
@@ -309,6 +310,7 @@ func newRemoteAggregation(rootAggregation *Aggregation, engines []api.RemoteEngi
 // For each engine which matches the time range of the query, it creates a RemoteExecution scoped to the range of the engine.
 // All remote executions are wrapped in a Deduplicate logical node to make sure that results from overlapping engines are deduplicated.
 func (m DistributedExecutionOptimizer) distributeQuery(expr *Node, engines []api.RemoteEngine, opts *query.Options, allowedStartOffset time.Duration) Node {
+	log.Print("jidai distributeQuery\n")
 	startOffset := calculateStartOffset(expr, opts.LookbackDelta)
 	if allowedStartOffset < startOffset {
 		return *expr
