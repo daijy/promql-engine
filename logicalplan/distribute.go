@@ -345,6 +345,9 @@ func (m DistributedExecutionOptimizer) distributeQuery(expr *Node, engines []api
 
 	remoteQueries := make(RemoteExecutions, 0, len(engines))
 	for _, e := range engines {
+		for _, lbls := range e.LabelSets() {
+			log.Printf("jidai %s", lbls.String())
+		}
 		if !matchesExternalLabelSet(*expr, e.LabelSets()) {
 			continue
 		}
@@ -544,14 +547,11 @@ func isDistributive(expr *Node, skipBinaryPushdown bool, engineLabels map[string
 			isDistributive(&e.LHS, skipBinaryPushdown, engineLabels, warns) &&
 			isDistributive(&e.RHS, skipBinaryPushdown, engineLabels, warns)
 	case *Aggregation:
-		log.Print("here4")
 		// Certain aggregations are currently not supported.
 		if _, ok := distributiveAggregations[e.Op]; !ok {
-			log.Print("here6")
 			return false
 		}
 	case *FunctionCall:
-		log.Print("here5")
 		if e.Func.Name == "label_replace" {
 			targetLabel := UnsafeUnwrapString(e.Args[1])
 			if _, ok := engineLabels[targetLabel]; ok {
