@@ -5,6 +5,7 @@ package engine
 
 import (
 	"context"
+	"log"
 	"time"
 
 	"github.com/thanos-io/promql-engine/api"
@@ -109,6 +110,7 @@ func (l DistributedEngine) MakeRangeQuery(ctx context.Context, q storage.Queryab
 	start = start.Truncate(time.Second)
 	end = end.Truncate(time.Second)
 	interval = interval.Truncate(time.Second)
+	log.Print("jidai MakeRangeQuery")
 
 	qOpts := fromPromQLOpts(opts)
 	qOpts.LogicalOptimizers = []logicalplan.Optimizer{
