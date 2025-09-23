@@ -97,7 +97,6 @@ func (a *aggregate) Explain() (next []model.VectorOperator) {
 }
 
 func (a *aggregate) Series(ctx context.Context) ([]labels.Labels, error) {
-	log.Print("aggregate.Series")
 	start := time.Now()
 	defer func() { a.AddExecutionTimeTaken(time.Since(start)) }()
 
@@ -115,8 +114,8 @@ func (a *aggregate) GetPool() *model.VectorPool {
 }
 
 func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
-	log.Print("aggregate.Next")
 	start := time.Now()
+	log.Printf("jidai: %T", a.next)
 	defer func() { a.AddExecutionTimeTaken(time.Since(start)) }()
 
 	select {
