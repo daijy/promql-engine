@@ -232,7 +232,6 @@ func (m DistributedExecutionOptimizer) Optimize(plan Node, opts *query.Options) 
 				localAggregation = parser.SUM
 			}
 
-			log.Print("jidai1 here7")
 			remoteAggregation := newRemoteAggregation(aggr, engines)
 			subQueries := m.distributeQuery(&remoteAggregation, engines, m.subqueryOpts(parents, current, opts), minEngineOverlap)
 			*current = &Aggregation{
