@@ -338,7 +338,7 @@ func (e *Engine) MakeInstantQueryFromPlan(ctx context.Context, q storage.Queryab
 }
 
 func (e *Engine) MakeRangeQuery(ctx context.Context, q storage.Queryable, opts *QueryOpts, qs string, start, end time.Time, step time.Duration) (promql.Query, error) {
-	log.Printf("jidai111: %s", qs)
+	log.Printf("jidai111: %s, %s - %s, %d", qs, start, end, step)
 	idx, err := e.activeQueryTracker.Insert(ctx, qs)
 	if err != nil {
 		return nil, err
