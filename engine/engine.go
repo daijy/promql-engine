@@ -239,6 +239,7 @@ type Engine struct {
 }
 
 func (e *Engine) MakeInstantQuery(ctx context.Context, q storage.Queryable, opts *QueryOpts, qs string, ts time.Time) (promql.Query, error) {
+	log.Printf("jidai111: %s, %s", qs, ts)
 	idx, err := e.activeQueryTracker.Insert(ctx, qs)
 	if err != nil {
 		return nil, err
