@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"math"
+	"runtime/debug"
 	"slices"
 	"sort"
 	"strings"
@@ -312,6 +313,7 @@ func newRemoteAggregation(rootAggregation *Aggregation, engines []api.RemoteEngi
 // All remote executions are wrapped in a Deduplicate logical node to make sure that results from overlapping engines are deduplicated.
 func (m DistributedExecutionOptimizer) distributeQuery(expr *Node, engines []api.RemoteEngine, opts *query.Options, allowedStartOffset time.Duration) Node {
 	log.Print("start distributeQuery")
+	debug.PrintStack()
 	startOffset := calculateStartOffset(expr, opts.LookbackDelta)
 	if allowedStartOffset < startOffset {
 		return *expr
