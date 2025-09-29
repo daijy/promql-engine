@@ -599,6 +599,7 @@ loop:
 	for {
 		select {
 		case <-ctx.Done():
+			log.Printf("Query.exec end %d", time.Since(start).Milliseconds())
 			return newErrResult(ret, ctx.Err())
 		default:
 			r, err := q.Query.exec.Next(ctx)
@@ -606,6 +607,7 @@ loop:
 				return newErrResult(ret, err)
 			}
 			if r == nil {
+				log.Printf("break")
 				break loop
 			}
 
