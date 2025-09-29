@@ -654,6 +654,7 @@ loop:
 		if matrix.ContainsSameLabelset() {
 			return newErrResult(ret, extlabels.ErrDuplicateLabelSet)
 		}
+		log.Printf("Query.exec end %d", time.Since(start).Milliseconds())
 		return ret
 	}
 
