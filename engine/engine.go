@@ -697,6 +697,7 @@ loop:
 	default:
 		panic(errors.Newf("new.Engine.exec: unexpected expression type %q", q.plan.Root().ReturnType()))
 	}
+	log.Print("Query.exec end")
 
 	ret.Value = result
 	return ret
