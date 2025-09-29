@@ -554,6 +554,7 @@ func printExecPlan(q promql.Query) {
 }
 func (q *compatibilityQuery) Exec(ctx context.Context) (ret *promql.Result) {
 	printExecPlan(q)
+	start := time.Now()
 	idx, err := q.engine.activeQueryTracker.Insert(ctx, q.String())
 	if err != nil {
 		return &promql.Result{Err: err}
@@ -697,7 +698,7 @@ loop:
 	default:
 		panic(errors.Newf("new.Engine.exec: unexpected expression type %q", q.plan.Root().ReturnType()))
 	}
-	log.Print("Query.exec end")
+	log.Printf("Query.exec end %d", time.Since(start).Milliseconds())
 
 	ret.Value = result
 	return ret
