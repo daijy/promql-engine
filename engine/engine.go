@@ -607,7 +607,6 @@ loop:
 				return newErrResult(ret, err)
 			}
 			if r == nil {
-				log.Printf("break")
 				break loop
 			}
 
@@ -656,7 +655,6 @@ loop:
 		if matrix.ContainsSameLabelset() {
 			return newErrResult(ret, extlabels.ErrDuplicateLabelSet)
 		}
-		log.Printf("Query.exec end %d", time.Since(start).Milliseconds())
 		return ret
 	}
 
@@ -701,7 +699,6 @@ loop:
 	default:
 		panic(errors.Newf("new.Engine.exec: unexpected expression type %q", q.plan.Root().ReturnType()))
 	}
-	log.Printf("Query.exec end %d", time.Since(start).Milliseconds())
 
 	ret.Value = result
 	return ret

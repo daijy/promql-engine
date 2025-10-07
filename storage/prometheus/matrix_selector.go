@@ -6,6 +6,7 @@ package prometheus
 import (
 	"context"
 	"fmt"
+	"log"
 	"math"
 	"strings"
 	"sync"
@@ -255,19 +256,19 @@ func (o *matrixSelector) loadSeries(ctx context.Context) error {
 			o.series[i] = lbls
 		}
 
-		// var zero_series int = 0
-		// var total_counter int = 0
-		// for _, s := range o.scanners {
-		// 	var counter int = 0
-		// 	for valType := s.iterator.Next(); valType != chunkenc.ValNone; valType = s.iterator.Next() {
-		// 		counter++
-		// 	}
-		// 	total_counter += counter
-		// 	if counter == 0 {
-		// 		zero_series++
-		// 	}
-		// }
-		// log.Printf("daijy2: zero_series:%d, total data points: %d, avg length %f", zero_series, total_counter, float64(total_counter)/float64(len(o.scanners)-zero_series))
+		var zero_series int = 0
+		var total_counter int = 0
+		for _, s := range o.scanners {
+			var counter int = 0
+			for valType := s.iterator.Next(); valType != chunkenc.ValNone; valType = s.iterator.Next() {
+				counter++
+			}
+			total_counter += counter
+			if counter == 0 {
+				zero_series++
+			}
+		}
+		log.Printf("daijy2: zero_series:%d, total data points: %d, avg length %f", zero_series, total_counter, float64(total_counter)/float64(len(o.scanners)-zero_series))
 		numSeries := int64(len(o.series))
 		if o.seriesBatchSize == 0 || numSeries < o.seriesBatchSize {
 			o.seriesBatchSize = numSeries
