@@ -67,7 +67,6 @@ func (o *seriesSelector) loadSeries(ctx context.Context) error {
 		i++
 	}
 	log.Printf("jidai 12 forloop end num input series %d", len(o.series))
-	log.Printf("Series shard %d/%d: %d series (from %d to %d)", index, numShards, end-start, start, end)
 
 	for _, w := range seriesSet.Warnings() {
 		warnings.AddToContext(w, ctx)
