@@ -5,6 +5,7 @@ package prometheus
 
 import (
 	"context"
+	"log"
 	"sync"
 
 	"github.com/thanos-io/promql-engine/execution/warnings"
@@ -50,13 +51,13 @@ func (o *seriesSelector) GetSeries(ctx context.Context, shard int, numShards int
 	if err != nil {
 		return nil, err
 	}
-
 	return seriesShard(o.series, shard, numShards), nil
 }
 
 func (o *seriesSelector) loadSeries(ctx context.Context) error {
 	seriesSet := o.storage.Select(ctx, false, &o.hints, o.matchers...)
 	i := 0
+	log.Print("jidai 12 forloop begin")
 	for seriesSet.Next() {
 		s := seriesSet.At()
 		o.series = append(o.series, SignedSeries{
@@ -65,6 +66,8 @@ func (o *seriesSelector) loadSeries(ctx context.Context) error {
 		})
 		i++
 	}
+	log.Printf("jidai 12 forloop end num input series %d", len(o.series))
+	log.Printf("Series shard %d/%d: %d series (from %d to %d)", index, numShards, end-start, start, end)
 
 	for _, w := range seriesSet.Warnings() {
 		warnings.AddToContext(w, ctx)

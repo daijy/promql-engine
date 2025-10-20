@@ -5,6 +5,8 @@ package engine
 
 import (
 	"context"
+	"fmt"
+	"log"
 	"log/slog"
 	"maps"
 	"math"
@@ -134,7 +136,7 @@ func NewWithScanners(opts Opts, scanners engstorage.Scanners) *Engine {
 	}
 	if opts.ExtLookbackDelta == 0 {
 		opts.ExtLookbackDelta = 1 * time.Hour
-		opts.Logger.Debug("external lookback delta is zero, setting to default value", "value", 1*time.Hour)
+		opts.Logger.Debug("external lookback delta is zero, setting to default value", "value", 1*24*time.Hour)
 	}
 	if len(opts.LogicalOptimizers) == 0 {
 		opts.LogicalOptimizers = append(
@@ -171,6 +173,7 @@ func NewWithScanners(opts Opts, scanners engstorage.Scanners) *Engine {
 	if opts.DecodingConcurrency < 1 {
 		decodingConcurrency = max(runtime.GOMAXPROCS(0)/2, 1)
 	}
+	// decodingConcurrency = 1
 	selectorBatchSize := opts.SelectorBatchSize
 
 	var queryTracker promql.QueryTracker = nopQueryTracker{}
@@ -340,6 +343,7 @@ func (e *Engine) MakeRangeQuery(ctx context.Context, q storage.Queryable, opts *
 	}
 	defer e.activeQueryTracker.Delete(idx)
 
+	log.Printf("daijy enter thanos query")
 	expr, err := parser.NewParser(qs, parser.WithFunctions(e.functions)).ParseExpr()
 	if err != nil {
 		return nil, err
@@ -531,7 +535,30 @@ type compatibilityQuery struct {
 	scanners engstorage.Scanners
 }
 
+func printExecPlan(q promql.Query) {
+	eq, ok := q.(ExplainableQuery)
+	if !ok {
+		fmt.Println("plan unavailable")
+		return
+	}
+	var walk func(node ExplainOutputNode, indent, indentNext string)
+	walk = func(node ExplainOutputNode, indent, indentNext string) {
+		fmt.Printf("%s%s\n", indent, node.OperatorName)
+		for i, child := range node.Children {
+			nextIndent := indentNext + "│  "
+			branch := indentNext + "├──"
+			if i == len(node.Children)-1 {
+				nextIndent = indentNext + "   "
+				branch = indentNext + "└──"
+			}
+			walk(child, branch, nextIndent)
+		}
+	}
+	walk(*eq.Explain(), "", "")
+}
 func (q *compatibilityQuery) Exec(ctx context.Context) (ret *promql.Result) {
+	printExecPlan(q)
+	start := time.Now()
 	idx, err := q.engine.activeQueryTracker.Insert(ctx, q.String())
 	if err != nil {
 		return &promql.Result{Err: err}
@@ -558,7 +585,9 @@ func (q *compatibilityQuery) Exec(ctx context.Context) (ret *promql.Result) {
 	defer cancel()
 	q.cancel = cancel
 
+	log.Print("Query.exec.Series start")
 	resultSeries, err := q.Query.exec.Series(ctx)
+	log.Printf("Query.exec.Series end %d", len(resultSeries))
 	if err != nil {
 		return newErrResult(ret, err)
 	}
@@ -571,6 +600,7 @@ loop:
 	for {
 		select {
 		case <-ctx.Done():
+			log.Printf("Query.exec end %d", time.Since(start).Milliseconds())
 			return newErrResult(ret, ctx.Err())
 		default:
 			r, err := q.Query.exec.Next(ctx)

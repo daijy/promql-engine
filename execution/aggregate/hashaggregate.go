@@ -6,8 +6,10 @@ package aggregate
 import (
 	"context"
 	"fmt"
+	"log"
 	"math"
 	"sync"
+	"time"
 
 	"github.com/thanos-io/promql-engine/execution/model"
 	"github.com/thanos-io/promql-engine/execution/parse"
@@ -70,6 +72,7 @@ func NewHashAggregate(
 		labels:      labels,
 		stepsBatch:  opts.StepsBatch,
 	}
+	log.Printf("jidai5 NewHashAggregate stepsBatch %d", opts.StepsBatch)
 
 	return telemetry.NewOperator(telemetry.NewTelemetry(a, opts), a), nil
 }
@@ -103,13 +106,26 @@ func (a *aggregate) GetPool() *model.VectorPool {
 	return a.vectorPool
 }
 
+type logWriter struct {
+}
+
+func (writer logWriter) Write(bytes []byte) (int, error) {
+	return fmt.Print(time.Now().UTC().Format("2006-01-02T15:04:05.999Z") + string(bytes))
+}
+
+var input_counter int = 0
+var num_steps int = 0
+
 func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
+	log.Printf("jidai start aggregate")
 	select {
 	case <-ctx.Done():
 		return nil, ctx.Err()
 	default:
 	}
 
+	log.SetFlags(0)
+	log.SetOutput(new(logWriter))
 	var err error
 	a.once.Do(func() { err = a.initializeTables(ctx) })
 	if err != nil {
@@ -134,6 +150,7 @@ func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 	for i, p := range a.params {
 		a.tables[i].reset(p)
 	}
+	// If we have a last batch from the previous call, process it first.
 	if a.lastBatch != nil {
 		if err := a.aggregate(ctx, a.lastBatch); err != nil {
 			return nil, err
@@ -141,7 +158,12 @@ func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 		a.lastBatch = nil
 	}
 	for {
-		next, err := a.next.Next(ctx)
+		var next []model.StepVector
+		next, err = a.next.Next(ctx)
+		for _, a := range next {
+			input_counter += len(a.Samples)
+			num_steps++
+		}
 		if err != nil {
 			return nil, err
 		}
@@ -159,6 +181,7 @@ func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 		a.lastBatch = next
 		break
 	}
+	log.Printf("jidai1: input_counter %d, num_steps %d", input_counter, num_steps)
 
 	if a.tables[0].timestamp() == math.MinInt64 {
 		return nil, nil
@@ -171,6 +194,7 @@ func (a *aggregate) Next(ctx context.Context) ([]model.StepVector, error) {
 		}
 		result = append(result, a.tables[i].toVector(ctx, a.vectorPool))
 	}
+	log.Printf("jidai end aggregate, %d, %d, %d", len(result), len(result[0].SampleIDs), len(result[0].HistogramIDs))
 	return result, nil
 }
 
@@ -226,6 +250,7 @@ func (a *aggregate) initializeVectorizedTables(ctx context.Context) ([]aggregate
 
 func (a *aggregate) initializeScalarTables(ctx context.Context) ([]aggregateTable, []labels.Labels, error) {
 	series, err := a.next.Series(ctx)
+	log.Printf("daijy6: len of input series: len(series), %d", len(series))
 	if err != nil {
 		return nil, nil, err
 	}
